@@ -42,7 +42,6 @@ namespace Fourex_Kiosk_Analytics
 
         public static bool UpdateAlertKeyIndicatorsFlag = false;
 
-
         public static int KioskIndex = 0;
 
         public static bool TriggerOffLineListViewUpdate = false;
@@ -66,6 +65,12 @@ namespace Fourex_Kiosk_Analytics
         public static string Setup_Password02 = "";
         public static string Setup_Password03 = "";
 
+        public static int UPTimeArraySize = 1000;
+
+        public static int[] UPTime_UPTimeMins       = new int[UPTimeArraySize];
+        public static int[] UPTime_DownTimeMins     = new int[UPTimeArraySize];
+        public static string[] UPTime_KioskNumber   = new string[UPTimeArraySize];
+        public static int[] UPTime_Day              = new int[UPTimeArraySize];      
     }
 }
 

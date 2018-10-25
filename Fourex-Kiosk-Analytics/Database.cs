@@ -247,6 +247,45 @@ namespace Fourex_Kiosk_Analytics
             }
         }
 
+
+        public static void UpdateKioskDB(string KioskNumber, string DayEndTime, string DayStartTime)
+        {
+            string FourexConnectionString = "Server=localhost;Database=fourex;Uid=root;Pwd=maritz2580";
+
+            MySqlDataReader reader = null;
+            MySqlConnection con = null;
+            MySqlCommand cmd = null;
+
+            string ConnectionString = FourexConnectionString;
+            con = new MySqlConnection(ConnectionString);
+
+            string query = "UPDATE fourex.errorsetup SET StopSleep = '" + DayEndTime + "'" +", StartSleep = " + "'" + DayStartTime + "'" + " WHERE KioskNumber = '" + KioskNumber + "'";
+
+            cmd = new MySqlCommand(query);
+            cmd.Connection = con;
+
+            try
+            {
+                con.Open();
+                reader = cmd.ExecuteReader();
+
+                reader.Close();
+                reader.Dispose();
+                con.Dispose();
+                con.Close();
+                cmd.Connection.Close();
+                cmd.Dispose();
+                cmd.Connection.Dispose();
+            }
+            catch (Exception ex)
+            {
+                cmd.Connection.Close();
+                con.Close();
+                cmd.Dispose();
+                con.Dispose();
+            }
+        }
+
         public static void LoadPersistFileDetailsIntoDB()
         {
             //--- Read DB out Database 
@@ -256,38 +295,50 @@ namespace Fourex_Kiosk_Analytics
             MySqlConnection con = null;
             MySqlCommand cmd = null;
 
-         //   for (int i = 0; i < KioskNumberList[i]; i++)
+            for (int i = 1; i < Variables.ListArraySize; i++)
             {
-                string ConnectionString = FourexConnectionString;
-                con = new MySqlConnection(ConnectionString);
-
-                string Status = null;
-                string KioskNumber = null;
-
-                string query = "UPDATE fourex.errorlogs WHERE KioskNumber  = '" + "' WHERE KioskNumber = '" + KioskNumber + "'";
-
-                cmd = new MySqlCommand(query);
-                cmd.Connection = con;
-
-                try
+                if (!(Variables.KioskNumberList[i] == ""))
                 {
-                    con.Open();
-                    reader = cmd.ExecuteReader();
+                    string ConnectionString = FourexConnectionString;
+                    con = new MySqlConnection(ConnectionString);
 
-                    reader.Close();
-                    reader.Dispose();
-                    con.Dispose();
-                    con.Close();
-                    cmd.Connection.Close();
-                    cmd.Dispose();
-                    cmd.Connection.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    cmd.Connection.Close();
-                    con.Close();
-                    cmd.Dispose();
-                    con.Dispose();
+                    string Status = null;
+                    string KioskNumber = null;
+
+                    string query = "SELECT *FROM fourex.errorlogs WHERE KioskNumber = '" + Variables.KioskNumberList[i] + "'" + " AND (Mail like '%<< Maintenance ON >>%' OR Mail like '%<< Maintenance OFF >>%') ORDER BY TxStamp Limit 1";
+
+                    cmd = new MySqlCommand(query);
+                    cmd.Connection = con;
+
+                    try
+                    {
+                        con.Open();
+                        reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            string StartSleep = reader["Mail"].ToString().Substring(reader["Mail"].ToString().IndexOf("StartSleep")+13, 19);
+
+                            string StopSleep = reader["Mail"].ToString().Substring(reader["Mail"].ToString().IndexOf("StopSleep") + 12, 19);
+
+                            UpdateKioskDB(Variables.KioskNumberList[i], StopSleep, StartSleep);
+                        }
+                        
+                        reader.Close();
+                        reader.Dispose();
+                        con.Dispose();
+                        con.Close();
+                        cmd.Connection.Close();
+                        cmd.Dispose();
+                        cmd.Connection.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        cmd.Connection.Close();
+                        con.Close();
+                        cmd.Dispose();
+                        con.Dispose();
+                    }
                 }
             }
         }
@@ -601,6 +652,11 @@ namespace Fourex_Kiosk_Analytics
                 cmd.Dispose();
                 con.Dispose();
             }
+        }
+
+        public static void CalculateDownTime ()
+        {
+
         }
     }
 }

@@ -1839,7 +1839,7 @@ namespace Fourex_Kiosk_Analytics
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            // RunAutoAlertManager();  
+            Database.LoadPersistFileDetailsIntoDB();
         }
 
         private void checkBox_Failures_BV_CheckedChanged(object sender, EventArgs e)

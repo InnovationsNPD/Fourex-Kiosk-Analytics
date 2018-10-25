@@ -98,7 +98,6 @@ namespace Fourex_Kiosk_Analytics
             Variables.TriggerOffLineListViewUpdate = true;
 
             this.Close();
-
         }
     }
 }
