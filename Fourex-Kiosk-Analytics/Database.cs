@@ -9,9 +9,6 @@ namespace Fourex_Kiosk_Analytics
 {
     class Database
     {
-        static string Temp1 = null;
-        static string Temp2 = null;
-
         public static void LoadFromDBOffLineListView()
         {
             string FourexConnectionString = "Server=localhost;Database=fourex;Uid=root;Pwd=maritz2580";
@@ -246,7 +243,6 @@ namespace Fourex_Kiosk_Analytics
                 con.Dispose();
             }
         }
-
 
         public static void UpdateKioskDB(string KioskNumber, string DayEndTime, string DayStartTime)
         {
@@ -654,9 +650,233 @@ namespace Fourex_Kiosk_Analytics
             }
         }
 
-        public static void CalculateDownTime ()
+        public static int CaculateTotalMinsPerDay(int Index, int DayToday)
         {
+            int Mins = 0;
 
+            double Duration = 0;
+
+            //--- Today Moveing Time for end time  
+            if (DayToday == 0)
+            {
+                if (DateTime.Parse(DateTime.Now.ToString()).Subtract(DateTime.Parse(Variables.KioskStartSleep[Index])).TotalMinutes < 0)
+                {
+                    Duration = DateTime.Parse(DateTime.Now.ToString()).Subtract(DateTime.Parse(Variables.KioskStopSleep[Index])).TotalMinutes;
+                }
+                else
+                {
+                    Duration = DateTime.Parse(Variables.KioskStartSleep[Index]).Subtract(DateTime.Parse(Variables.KioskStopSleep[Index])).TotalMinutes;
+                }
+            }
+            else
+            {
+                Duration = DateTime.Parse(Variables.KioskStartSleep[Index]).Subtract(DateTime.Parse(Variables.KioskStopSleep[Index])).TotalMinutes;
+            }
+
+            return(Convert.ToInt16(Duration));
+        }
+
+        public static void CalculateDownTime (int Index)
+        {
+            int TotalMins           = 0;
+            int Point               = 0;
+            string StartTime        = "";
+            string EndTime          = "";
+            int UPTimeIndexCounter  = 0;
+
+            //-- Reset Array 
+            for(int l = 0;l< Variables.UPTimeArraySize;l++)
+            {
+                Variables.UPTime_DownTimeMins[l]    = 0;
+                Variables.UPTime_UPTimeMins[l]      = 0;
+                Variables.UPTime_KioskNumber[l]     = null;
+                Variables.UPTime_Day[l]             = 0;
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+               Variables.UPTime_TotalMins[i]        = 0;
+               Variables.UPTime_TotalDownMins[i]    = 0;
+               Variables.UPTime_PerCentage[i]       = 0;
+               Variables.UPTime_DayName[i]          = "";
+            }
+
+           //  SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '0037'  AND TxStamp >= '2018-10-24 06:00:00' AND TxStamp <= '2018-10-24 22:00:00' order by TxStamp desc;
+
+            //--- Read DB out Database 
+            string FourexConnectionString = "Server=localhost;Database=fourex;Uid=root;Pwd=maritz2580";
+
+            MySqlDataReader reader = null;
+            MySqlConnection con = null;
+            MySqlCommand cmd = null;
+
+            for (int i = 1; i < Variables.ListArraySize; i++)
+            {
+                if (!(Variables.KioskNumberList[i] == ""))
+                {
+                    if ((Form1.CheckKioskStatus(Variables.KioskNumberList[i]) == "Live")||(Form1.CheckKioskStatus(Variables.KioskNumberList[i])=="OffLine"))
+                    {
+                        for (int Days = 0; Days < 7; Days++)
+                        {
+                            DateTime Date = DateTime.Now.AddDays(-Days);
+
+                            Variables.UPTime_DayName[Days] = DateTime.Now.AddDays(-Days).DayOfWeek.ToString();
+
+                            DateTime DateStartSleep = Convert.ToDateTime(Date.ToString("yyyy-MM-dd") + " " + Variables.KioskStartSleep[i]).AddHours(2);
+                            DateTime DateStopSleep = Convert.ToDateTime(Date.ToString("yyyy-MM-dd") + " " + Variables.KioskStopSleep[i]).AddHours(2);
+
+                            string DateStartString = DateStartSleep.ToString("yyyy-MM-dd HH:mm:ss");
+                            string DateStopString = DateStopSleep.ToString("yyyy-MM-dd HH:mm:ss");
+
+                            //string DateStartString = Date.ToString("yyyy-MM-dd") + " " + Variables.KioskStartSleep[i];
+                            //string DateStopString = Date.ToString("yyyy-MM-dd") + " " + Variables.KioskStopSleep[i];
+
+                            string ConnectionString = FourexConnectionString;
+                            con = new MySqlConnection(ConnectionString);
+
+                            //string query = "SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '0037'  AND TxStamp >= '2018-10-24 06:00:00' AND TxStamp <= '2018-10-24 22:00:00' order by TxStamp asc";
+
+                            if (Variables.KioskNumberList[i] == "0015")
+                            {
+                                int hj = 0; 
+                            }
+
+                            System.Windows.Forms.Application.DoEvents();
+
+                            string query = "SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '" + Variables.KioskNumberList[i] + "' AND TxStamp >= '" + DateStopString + "' AND TxStamp <= '" + DateStartString + "' order by TxStamp asc";
+
+                            cmd = new MySqlCommand(query);
+                            cmd.Connection = con;
+
+                            double Duration = 0;
+                            Point           = 0;
+                            TotalMins       = 0;
+
+                            try
+                            {
+                                con.Open();
+                                reader = cmd.ExecuteReader();
+
+                                while (reader.Read())
+                                {
+                                    if (reader["KioskNumber"].ToString() == "0015")
+                                    {
+                                        int pp = 9;
+                                    }
+
+                                    if (Point == 0)
+                                    {
+                                        StartTime = reader["TxStamp"].ToString();
+                                    }
+
+                                    Point++;
+
+                                    EndTime = reader["TxStamp"].ToString();
+                                }
+
+                                if (Point > 0)
+                                {
+                                    //----------------------------------------------
+                                    //--- Check if Kioks was in MM in Sleep mode ---
+                                    //----------------------------------------------
+
+                                    DateTime Start = Convert.ToDateTime(StartTime.ToString());
+                                    string StartString = Start.ToString("HH:mm:ss");
+
+                                    DateTime End = Convert.ToDateTime(EndTime.ToString());
+                                    string EndString = End.ToString("HH:mm:ss");
+
+                                    if (DateTime.Parse(Variables.KioskStopSleep[i]).Subtract(DateTime.Parse(StartString)).TotalMinutes < 30)
+                                    {
+                                        StartTime = Variables.KioskStopSleep[i];
+                                    }
+
+                                    if (DateTime.Parse(Variables.KioskStartSleep[i]).Subtract(DateTime.Parse(EndString)).TotalMinutes < 30)
+                                    {
+                                        EndTime = Variables.KioskStartSleep[i];
+                                    }
+
+                                    Duration = DateTime.Parse(EndString).Subtract(DateTime.Parse(StartString)).TotalMinutes;
+                                }
+
+                                TotalMins = CaculateTotalMinsPerDay(i,Days);
+
+                                Variables.UPTime_Day[UPTimeIndexCounter]            = Days;
+                                Variables.UPTime_DownTimeMins[UPTimeIndexCounter]   = Convert.ToInt16(Duration);
+                                Variables.UPTime_UPTimeMins[UPTimeIndexCounter]     = Convert.ToInt16(TotalMins);
+                                Variables.UPTime_KioskNumber[UPTimeIndexCounter]    = Variables.KioskNumberList[i];
+
+                                UPTimeIndexCounter++;
+
+                                reader.Close();
+                                reader.Dispose();
+                                con.Dispose();
+                                con.Close();
+                                cmd.Connection.Close();
+                                cmd.Dispose();
+                                cmd.Connection.Dispose();
+                            }
+                            catch (Exception ex)
+                            {
+                                cmd.Connection.Close();
+                                con.Close();
+                                cmd.Dispose();
+                                con.Dispose();
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int TotDays = 0; TotDays < 7; TotDays++)
+            {
+                int KioskIndex = 0;
+
+                for (int h = 0; h < UPTimeIndexCounter; h++)
+                {
+                   
+                    if (Index == 0)
+                    {
+                        if (Variables.UPTime_Day[h] == TotDays)
+                        {
+                            Variables.UPTime_TotalMins[TotDays] = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+                            Variables.UPTime_TotalDownMins[TotDays] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                        }
+                    }
+                    else
+                    {
+                        if ((Variables.UPTime_Day[h] == TotDays)&&(Variables.UPTime_KioskNumber[h]==Variables.KioskNumberList[Index]))
+                        {
+                            Variables.UPTime_TotalMins[TotDays] = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+                            Variables.UPTime_TotalDownMins[TotDays] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                        }
+                    }
+
+                    //-- Calculate 7 Days AVE per Kiosk 
+
+                    for (int i = 0; i < Variables.ListArraySize;i++)
+                    {
+                        if(Variables.KioskNumberList[i]!=null)
+                        {
+                            if ((Variables.UPTime_Day[h] == TotDays) && (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
+                            {
+                                Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]   = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+                                Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                                Variables.UPTime_AVG_KioskNumber[KioskIndex]    = Variables.KioskNumberList[i];
+                                Variables.UPTime_AVG_KioskName[KioskIndex]      = Variables.KioskNameList[i];
+                                KioskIndex++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int TotDays = 0; TotDays < 7; TotDays++)
+            {
+                Variables.UPTime_PerCentage[TotDays] = (100 - ((Convert.ToDouble(Variables.UPTime_TotalDownMins[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
+            }
+   
+            int gg = 0;
         }
     }
 }

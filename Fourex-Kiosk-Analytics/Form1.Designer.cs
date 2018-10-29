@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.button_TriggerMail = new System.Windows.Forms.Button();
             this.textBox_ProgressInfo = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -60,6 +63,9 @@
             this.groupBox_Alert = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBox_Failures_ND_USD = new System.Windows.Forms.CheckBox();
+            this.checkBox_Failures_ND_EUR = new System.Windows.Forms.CheckBox();
+            this.checkBox_Failures_ND_GBP = new System.Windows.Forms.CheckBox();
             this.checkBox_Failures_CD_USD = new System.Windows.Forms.CheckBox();
             this.checkBox_Failures_CD_EUR = new System.Windows.Forms.CheckBox();
             this.checkBox_Failures_CD_GBP2 = new System.Windows.Forms.CheckBox();
@@ -92,9 +98,13 @@
             this.editAlertManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox_AlertManager = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.checkBox_Failures_ND_GBP = new System.Windows.Forms.CheckBox();
-            this.checkBox_Failures_ND_EUR = new System.Windows.Forms.CheckBox();
-            this.checkBox_Failures_ND_USD = new System.Windows.Forms.CheckBox();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.groupBox_UPTime = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.comboBox_UPTimeKioskSelect = new System.Windows.Forms.ComboBox();
+            this.timer_UPTimeUpdate = new System.Windows.Forms.Timer(this.components);
+            this.groupBox_KioskAVEUPTime = new System.Windows.Forms.GroupBox();
+            this.listView_AVE_7_Day = new System.Windows.Forms.ListView();
             this.groupBox_DateSelect.SuspendLayout();
             this.groupBox_Alert.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -105,6 +115,9 @@
             this.groupBox_Notification.SuspendLayout();
             this.contextMenuStrip_AlertManager.SuspendLayout();
             this.groupBox_AlertManager.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.groupBox_UPTime.SuspendLayout();
+            this.groupBox_KioskAVEUPTime.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_TriggerMail
@@ -389,10 +402,10 @@
             // listView_AlertCounts
             // 
             this.listView_AlertCounts.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listView_AlertCounts.Location = new System.Drawing.Point(12, 37);
+            this.listView_AlertCounts.Location = new System.Drawing.Point(8, 23);
             this.listView_AlertCounts.Margin = new System.Windows.Forms.Padding(6);
             this.listView_AlertCounts.Name = "listView_AlertCounts";
-            this.listView_AlertCounts.Size = new System.Drawing.Size(486, 589);
+            this.listView_AlertCounts.Size = new System.Drawing.Size(486, 280);
             this.listView_AlertCounts.TabIndex = 24;
             this.listView_AlertCounts.UseCompatibleStateImageBehavior = false;
             // 
@@ -403,7 +416,7 @@
             this.groupBox_Alert.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox_Alert.Name = "groupBox_Alert";
             this.groupBox_Alert.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox_Alert.Size = new System.Drawing.Size(514, 640);
+            this.groupBox_Alert.Size = new System.Drawing.Size(506, 313);
             this.groupBox_Alert.TabIndex = 25;
             this.groupBox_Alert.TabStop = false;
             this.groupBox_Alert.Text = "Alert Counts (Last 24 Hours)";
@@ -444,6 +457,39 @@
             this.groupBox3.TabIndex = 31;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Heart Beat Failures ";
+            // 
+            // checkBox_Failures_ND_USD
+            // 
+            this.checkBox_Failures_ND_USD.AutoSize = true;
+            this.checkBox_Failures_ND_USD.Location = new System.Drawing.Point(168, 135);
+            this.checkBox_Failures_ND_USD.Name = "checkBox_Failures_ND_USD";
+            this.checkBox_Failures_ND_USD.Size = new System.Drawing.Size(124, 29);
+            this.checkBox_Failures_ND_USD.TabIndex = 34;
+            this.checkBox_Failures_ND_USD.Text = "ND USD";
+            this.checkBox_Failures_ND_USD.UseVisualStyleBackColor = true;
+            this.checkBox_Failures_ND_USD.CheckedChanged += new System.EventHandler(this.checkBox_Failures_ND_USD_CheckedChanged);
+            // 
+            // checkBox_Failures_ND_EUR
+            // 
+            this.checkBox_Failures_ND_EUR.AutoSize = true;
+            this.checkBox_Failures_ND_EUR.Location = new System.Drawing.Point(168, 100);
+            this.checkBox_Failures_ND_EUR.Name = "checkBox_Failures_ND_EUR";
+            this.checkBox_Failures_ND_EUR.Size = new System.Drawing.Size(124, 29);
+            this.checkBox_Failures_ND_EUR.TabIndex = 33;
+            this.checkBox_Failures_ND_EUR.Text = "ND EUR";
+            this.checkBox_Failures_ND_EUR.UseVisualStyleBackColor = true;
+            this.checkBox_Failures_ND_EUR.CheckedChanged += new System.EventHandler(this.checkBox_Failures_ND_EUR_CheckedChanged);
+            // 
+            // checkBox_Failures_ND_GBP
+            // 
+            this.checkBox_Failures_ND_GBP.AutoSize = true;
+            this.checkBox_Failures_ND_GBP.Location = new System.Drawing.Point(168, 65);
+            this.checkBox_Failures_ND_GBP.Name = "checkBox_Failures_ND_GBP";
+            this.checkBox_Failures_ND_GBP.Size = new System.Drawing.Size(124, 29);
+            this.checkBox_Failures_ND_GBP.TabIndex = 32;
+            this.checkBox_Failures_ND_GBP.Text = "ND GBP";
+            this.checkBox_Failures_ND_GBP.UseVisualStyleBackColor = true;
+            this.checkBox_Failures_ND_GBP.CheckedChanged += new System.EventHandler(this.checkBox_Failures_ND_GBP_CheckedChanged);
             // 
             // checkBox_Failures_CD_USD
             // 
@@ -542,7 +588,7 @@
             this.listView_OffLineKiosks.Location = new System.Drawing.Point(12, 37);
             this.listView_OffLineKiosks.Margin = new System.Windows.Forms.Padding(6);
             this.listView_OffLineKiosks.Name = "listView_OffLineKiosks";
-            this.listView_OffLineKiosks.Size = new System.Drawing.Size(974, 589);
+            this.listView_OffLineKiosks.Size = new System.Drawing.Size(974, 598);
             this.listView_OffLineKiosks.TabIndex = 27;
             this.listView_OffLineKiosks.UseCompatibleStateImageBehavior = false;
             // 
@@ -569,7 +615,7 @@
             this.groupBox_OffLineKiosk.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox_OffLineKiosk.Name = "groupBox_OffLineKiosk";
             this.groupBox_OffLineKiosk.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox_OffLineKiosk.Size = new System.Drawing.Size(1002, 640);
+            this.groupBox_OffLineKiosk.Size = new System.Drawing.Size(1002, 647);
             this.groupBox_OffLineKiosk.TabIndex = 29;
             this.groupBox_OffLineKiosk.TabStop = false;
             this.groupBox_OffLineKiosk.Text = "Off Line Kiosk";
@@ -649,7 +695,7 @@
             this.listView_Remedy.Location = new System.Drawing.Point(12, 37);
             this.listView_Remedy.Margin = new System.Windows.Forms.Padding(6);
             this.listView_Remedy.Name = "listView_Remedy";
-            this.listView_Remedy.Size = new System.Drawing.Size(778, 589);
+            this.listView_Remedy.Size = new System.Drawing.Size(778, 598);
             this.listView_Remedy.TabIndex = 33;
             this.listView_Remedy.UseCompatibleStateImageBehavior = false;
             // 
@@ -667,11 +713,11 @@
             // groupBox_Remedy
             // 
             this.groupBox_Remedy.Controls.Add(this.listView_Remedy);
-            this.groupBox_Remedy.Location = new System.Drawing.Point(1564, 1210);
+            this.groupBox_Remedy.Location = new System.Drawing.Point(2219, 1210);
             this.groupBox_Remedy.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox_Remedy.Name = "groupBox_Remedy";
             this.groupBox_Remedy.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox_Remedy.Size = new System.Drawing.Size(806, 640);
+            this.groupBox_Remedy.Size = new System.Drawing.Size(806, 647);
             this.groupBox_Remedy.TabIndex = 25;
             this.groupBox_Remedy.TabStop = false;
             this.groupBox_Remedy.Text = "Remedy  Last 7 Days";
@@ -679,7 +725,7 @@
             // groupBox_Notification
             // 
             this.groupBox_Notification.Controls.Add(this.listView_Notification);
-            this.groupBox_Notification.Location = new System.Drawing.Point(2382, 1210);
+            this.groupBox_Notification.Location = new System.Drawing.Point(3013, 1217);
             this.groupBox_Notification.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox_Notification.Name = "groupBox_Notification";
             this.groupBox_Notification.Padding = new System.Windows.Forms.Padding(6);
@@ -751,44 +797,86 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // checkBox_Failures_ND_GBP
+            // chart1
             // 
-            this.checkBox_Failures_ND_GBP.AutoSize = true;
-            this.checkBox_Failures_ND_GBP.Location = new System.Drawing.Point(168, 65);
-            this.checkBox_Failures_ND_GBP.Name = "checkBox_Failures_ND_GBP";
-            this.checkBox_Failures_ND_GBP.Size = new System.Drawing.Size(124, 29);
-            this.checkBox_Failures_ND_GBP.TabIndex = 32;
-            this.checkBox_Failures_ND_GBP.Text = "ND GBP";
-            this.checkBox_Failures_ND_GBP.UseVisualStyleBackColor = true;
-            this.checkBox_Failures_ND_GBP.CheckedChanged += new System.EventHandler(this.checkBox_Failures_ND_GBP_CheckedChanged);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(6, 69);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series1.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series1);
+            this.chart1.Size = new System.Drawing.Size(645, 564);
+            this.chart1.TabIndex = 40;
+            this.chart1.Text = "chart1";
             // 
-            // checkBox_Failures_ND_EUR
+            // groupBox_UPTime
             // 
-            this.checkBox_Failures_ND_EUR.AutoSize = true;
-            this.checkBox_Failures_ND_EUR.Location = new System.Drawing.Point(168, 100);
-            this.checkBox_Failures_ND_EUR.Name = "checkBox_Failures_ND_EUR";
-            this.checkBox_Failures_ND_EUR.Size = new System.Drawing.Size(124, 29);
-            this.checkBox_Failures_ND_EUR.TabIndex = 33;
-            this.checkBox_Failures_ND_EUR.Text = "ND EUR";
-            this.checkBox_Failures_ND_EUR.UseVisualStyleBackColor = true;
-            this.checkBox_Failures_ND_EUR.CheckedChanged += new System.EventHandler(this.checkBox_Failures_ND_EUR_CheckedChanged);
+            this.groupBox_UPTime.Controls.Add(this.label4);
+            this.groupBox_UPTime.Controls.Add(this.comboBox_UPTimeKioskSelect);
+            this.groupBox_UPTime.Controls.Add(this.chart1);
+            this.groupBox_UPTime.Location = new System.Drawing.Point(1553, 1210);
+            this.groupBox_UPTime.Name = "groupBox_UPTime";
+            this.groupBox_UPTime.Size = new System.Drawing.Size(657, 647);
+            this.groupBox_UPTime.TabIndex = 41;
+            this.groupBox_UPTime.TabStop = false;
+            this.groupBox_UPTime.Text = "Minute By Minute Uptime for Estate. Last Update ";
             // 
-            // checkBox_Failures_ND_USD
+            // label4
             // 
-            this.checkBox_Failures_ND_USD.AutoSize = true;
-            this.checkBox_Failures_ND_USD.Location = new System.Drawing.Point(168, 135);
-            this.checkBox_Failures_ND_USD.Name = "checkBox_Failures_ND_USD";
-            this.checkBox_Failures_ND_USD.Size = new System.Drawing.Size(124, 29);
-            this.checkBox_Failures_ND_USD.TabIndex = 34;
-            this.checkBox_Failures_ND_USD.Text = "ND USD";
-            this.checkBox_Failures_ND_USD.UseVisualStyleBackColor = true;
-            this.checkBox_Failures_ND_USD.CheckedChanged += new System.EventHandler(this.checkBox_Failures_ND_USD_CheckedChanged);
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(153, 33);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(131, 25);
+            this.label4.TabIndex = 42;
+            this.label4.Text = "Select Kiosk";
+            // 
+            // comboBox_UPTimeKioskSelect
+            // 
+            this.comboBox_UPTimeKioskSelect.FormattingEnabled = true;
+            this.comboBox_UPTimeKioskSelect.Location = new System.Drawing.Point(290, 25);
+            this.comboBox_UPTimeKioskSelect.Name = "comboBox_UPTimeKioskSelect";
+            this.comboBox_UPTimeKioskSelect.Size = new System.Drawing.Size(361, 33);
+            this.comboBox_UPTimeKioskSelect.TabIndex = 41;
+            this.comboBox_UPTimeKioskSelect.SelectedIndexChanged += new System.EventHandler(this.comboBox_UPTimeKioskSelect_SelectedIndexChanged);
+            // 
+            // timer_UPTimeUpdate
+            // 
+            this.timer_UPTimeUpdate.Enabled = true;
+            this.timer_UPTimeUpdate.Interval = 300000;
+            this.timer_UPTimeUpdate.Tick += new System.EventHandler(this.timer_UPTimeUpdate_Tick);
+            // 
+            // groupBox_KioskAVEUPTime
+            // 
+            this.groupBox_KioskAVEUPTime.Controls.Add(this.listView_AVE_7_Day);
+            this.groupBox_KioskAVEUPTime.Location = new System.Drawing.Point(1035, 1532);
+            this.groupBox_KioskAVEUPTime.Name = "groupBox_KioskAVEUPTime";
+            this.groupBox_KioskAVEUPTime.Size = new System.Drawing.Size(494, 325);
+            this.groupBox_KioskAVEUPTime.TabIndex = 42;
+            this.groupBox_KioskAVEUPTime.TabStop = false;
+            this.groupBox_KioskAVEUPTime.Text = "Last 7 Days UpTime ";
+            // 
+            // listView_AVE_7_Day
+            // 
+            this.listView_AVE_7_Day.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listView_AVE_7_Day.Location = new System.Drawing.Point(9, 33);
+            this.listView_AVE_7_Day.Margin = new System.Windows.Forms.Padding(6);
+            this.listView_AVE_7_Day.Name = "listView_AVE_7_Day";
+            this.listView_AVE_7_Day.Size = new System.Drawing.Size(486, 280);
+            this.listView_AVE_7_Day.TabIndex = 25;
+            this.listView_AVE_7_Day.UseCompatibleStateImageBehavior = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(3828, 1915);
+            this.Controls.Add(this.groupBox_KioskAVEUPTime);
+            this.Controls.Add(this.groupBox_UPTime);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox_AlertManager);
             this.Controls.Add(this.groupBox_Notification);
@@ -810,7 +898,7 @@
             this.Controls.Add(this.button_TriggerMail);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "Error Detector Console Ver 1.32";
+            this.Text = "Error Detector Console Ver 1.40";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_DateSelect.ResumeLayout(false);
             this.groupBox_DateSelect.PerformLayout();
@@ -826,8 +914,13 @@
             this.groupBox_Notification.ResumeLayout(false);
             this.contextMenuStrip_AlertManager.ResumeLayout(false);
             this.groupBox_AlertManager.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            this.groupBox_UPTime.ResumeLayout(false);
+            this.groupBox_UPTime.PerformLayout();
+            this.groupBox_KioskAVEUPTime.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -898,6 +991,13 @@
         private System.Windows.Forms.CheckBox checkBox_Failures_ND_USD;
         private System.Windows.Forms.CheckBox checkBox_Failures_ND_EUR;
         private System.Windows.Forms.CheckBox checkBox_Failures_ND_GBP;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.GroupBox groupBox_UPTime;
+        private System.Windows.Forms.ComboBox comboBox_UPTimeKioskSelect;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Timer timer_UPTimeUpdate;
+        private System.Windows.Forms.GroupBox groupBox_KioskAVEUPTime;
+        private System.Windows.Forms.ListView listView_AVE_7_Day;
     }
 }
 

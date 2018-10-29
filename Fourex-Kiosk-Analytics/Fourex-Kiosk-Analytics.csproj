@@ -44,6 +44,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -64,6 +65,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="KiosksGUPTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KiosksGUPTime.Designer.cs">
+      <DependentUpon>KiosksGUPTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="ManualAlert.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +89,9 @@
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KiosksGUPTime.resx">
+      <DependentUpon>KiosksGUPTime.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ManualAlert.resx">
       <DependentUpon>ManualAlert.cs</DependentUpon>

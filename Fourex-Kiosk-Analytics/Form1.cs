@@ -72,6 +72,13 @@ namespace Fourex_Kiosk_Analytics
             listView_OffLineKiosks.GridLines = true;
             listView_OffLineKiosks.FullRowSelect = true;
 
+            listView_AVE_7_Day.Columns.Add("Kiosk Name", 140);
+            listView_AVE_7_Day.Columns.Add("AVE", 50);
+
+            listView_AVE_7_Day.View = View.Details;
+            listView_AVE_7_Day.GridLines = true;
+            listView_AVE_7_Day.FullRowSelect = true;
+
             listView_Remedy.View = View.Details;
             listView_Remedy.GridLines = true;
             listView_Remedy.FullRowSelect = true;
@@ -107,6 +114,9 @@ namespace Fourex_Kiosk_Analytics
             dateTimePicker_TimeStart.ShowUpDown = true;
             dateTimePicker_TimeEnd.Format = DateTimePickerFormat.Time;
             dateTimePicker_TimeEnd.ShowUpDown = true;
+
+            comboBox_UPTimeKioskSelect.Text = "All Kiosks";
+            comboBox_KioskList.Text         = "All Kiosks";
 
             Database.LoadFromDBOffLineListView();
             PopulateOffLineListView();
@@ -548,7 +558,9 @@ namespace Fourex_Kiosk_Analytics
                 con.Open();
                 reader = cmd.ExecuteReader();
 
-                comboBox_KioskList.Items.Add("All Kiosk");
+                comboBox_KioskList.Items.Add("All Kiosks");
+                comboBox_UPTimeKioskSelect.Items.Add("All Kiosks");
+
                 Variables.KioskNameList[i] = null;
                 Variables.KioskNumberList[i] = null;
                 i++;
@@ -556,10 +568,20 @@ namespace Fourex_Kiosk_Analytics
                 while (reader.Read())
                 {
                     System.Windows.Forms.Application.DoEvents();
+
                     comboBox_KioskList.Items.Add(reader["KioskName"].ToString());
-                    Variables.KioskNameList[i] = reader["KioskName"].ToString();
-                    Variables.KioskNumberList[i] = reader["KioskNumber"].ToString();
-                    Variables.KioskStatus[i] = reader["Status"].ToString();
+                    comboBox_UPTimeKioskSelect.Items.Add(reader["KioskName"].ToString());
+
+                    Variables.KioskNameList[i]      = reader["KioskName"].ToString();
+                    Variables.KioskNumberList[i]    = reader["KioskNumber"].ToString();
+                    Variables.KioskStatus[i]        = reader["Status"].ToString();
+
+                    DateTime StartSleep = Convert.ToDateTime(reader["StartSleep"].ToString());
+                    Variables.KioskStartSleep[i] = StartSleep.ToString("HH:mm:ss");
+
+                    DateTime StopSleep = Convert.ToDateTime(reader["StopSleep"].ToString());
+                    Variables.KioskStopSleep[i] = StopSleep.ToString("HH:mm:ss");    
+
                     i++;
                 }                
 
@@ -587,11 +609,43 @@ namespace Fourex_Kiosk_Analytics
         {
             LoadKioskComboList();
             Database.LoadSetup();
+            UpdateUPTimeChart(0);
+            Database.LoadPersistFileDetailsIntoDB();
+            comboBox_KioskList.SelectedIndex            = 0;
+            comboBox_UPTimeKioskSelect.SelectedIndex    = 0;
         }
 
-        private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
+        public void UpdateUPTimeChart(int Index)
         {
+            groupBox_UPTime.Text = "Minute By Minute Uptime for Estate. Last Update " + DateTime.Now.ToShortTimeString() + "  ";
 
+            Database.CalculateDownTime(Index);
+
+            chart1.Series["Series1"].Points.Clear();
+
+            chart1.Series["Series1"].IsVisibleInLegend = false;
+
+            chart1.Series["Series1"].IsValueShownAsLabel = true;
+
+            chart1.ChartAreas[0].AxisY.Maximum = 100;
+            chart1.ChartAreas[0].AxisY.Minimum = 0;
+
+            if (Index == 0)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    chart1.Series["Series1"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    chart1.Series["Series1"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
+                }
+            }
+
+            chart1.Update();
         }
 
         private int CountChekeded()
@@ -1140,7 +1194,7 @@ namespace Fourex_Kiosk_Analytics
             DoLookDBUp(); 
         }
 
-        private string CheckKioskStatus(string KioskNumber)
+        public static string CheckKioskStatus(string KioskNumber)
         {
             string KioksStatus = null;
 
@@ -1266,8 +1320,7 @@ namespace Fourex_Kiosk_Analytics
                 return;
             }
             
-             OnOffLineForm.Show();
-            
+             OnOffLineForm.Show();          
         }
 
         public void OffLineListViewUpdate_Tick(object sender, EventArgs e)
@@ -1621,10 +1674,9 @@ namespace Fourex_Kiosk_Analytics
 
             //MessageBox.Show("Imported " + Variables.ImportCount + " Records");
 
-            textBox_ImportStatus.Text = Variables.ImportCount.ToString(); 
-           
+            textBox_ImportStatus.Text = Variables.ImportCount.ToString();      
         }
- 
+
 
         private void button_InportREMNOT_Click(object sender, EventArgs e)
         {
@@ -1833,6 +1885,10 @@ namespace Fourex_Kiosk_Analytics
             Database.AutoAlertManager("<< PROBLEM Security PCB >>,IPError,%",                       "EC(0010)","Security PCB IP Error");
             System.Windows.Forms.Application.DoEvents();
             Database.AutoAlertManager("<< PROBLEM Security PCB >>, <<--UNAUTHORISED ACCESS-->>%",   "EC(0011)", "Unauthorized Access");
+            System.Windows.Forms.Application.DoEvents();
+            Database.AutoAlertManager("%Search for suitable coins fail%",                           "EC(0012)", "Suitable coins fail");
+            System.Windows.Forms.Application.DoEvents();
+            Database.AutoAlertManager("<<High Value Transaction%",                                  "EC(0013)", "High Value Transaction");
 
             groupBox_AlertManager.Text = "Check Alert done. Last Update.. " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + " "; 
         }
@@ -1840,6 +1896,8 @@ namespace Fourex_Kiosk_Analytics
         private void button1_Click_1(object sender, EventArgs e)
         {
             Database.LoadPersistFileDetailsIntoDB();
+            Database.CalculateDownTime(0);
+            UpdateAVE7ListView();
         }
 
         private void checkBox_Failures_BV_CheckedChanged(object sender, EventArgs e)
@@ -1880,6 +1938,108 @@ namespace Fourex_Kiosk_Analytics
         private void checkBox_Failures_ND_USD_CheckedChanged(object sender, EventArgs e)
         {
             SwitchCheckBoxes();
+            
+        }
+
+        private void comboBox_UPTimeKioskSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox_UPTimeKioskSelect.SelectedIndex >= 0)
+            {
+                timer_UPTimeUpdate.Interval = 60000;
+                UpdateUPTimeChart(comboBox_UPTimeKioskSelect.SelectedIndex);
+            }
+        }
+
+        private void timer_UPTimeUpdate_Tick(object sender, EventArgs e)
+        {
+            comboBox_UPTimeKioskSelect.SelectedIndex = 0;
+
+            UpdateUPTimeChart(comboBox_UPTimeKioskSelect.SelectedIndex);
+
+            UpdateAVE7ListView();
+
+            timer_UPTimeUpdate.Interval = 300000;
+        }
+
+        private void button_KioskAVE_UPTime_Click(object sender, EventArgs e)
+        {
+            OnOffLine OnOffLineForm = new OnOffLine();
+
+            KiosksGUPTime KioskUPTime = new KiosksGUPTime();
+
+            KioskUPTime.Show();
+        }
+
+        private void UpdateAVE7ListView()
+        {
+            int TotalKioslCount = 0;
+            int Below100Persent = 0;
+
+            listView_AVE_7_Day.Items.Clear();
+
+            for (int i = 0; i < Variables.ListArraySize; i++)
+            {
+                if (Variables.UPTime_AVG_KioskNumber[i] != null)
+                {
+                    string[] arrAVE = new string[2];
+
+                    arrAVE[0] = Variables.UPTime_AVG_KioskName[i];
+
+                    //-- Cal Ave now 
+
+                    double tt = (100-((Variables.UPTime_AVG_Kiosk_DownTime[i] / Variables.UPTime_AVG_Kioks_UPTime[i]) * 100));
+
+                    double RoundVal = Math.Round(tt,2);
+
+                    arrAVE[1] = Convert.ToString(RoundVal);
+
+                    // arrAlert[1] = "test";
+
+                    ListViewItem itmAVE;
+
+                    listView_AVE_7_Day.Refresh();
+
+                    itmAVE = new ListViewItem(arrAVE);
+
+                    //    if ((RoundVal == 11))
+                    //        itmAlert.ForeColor = Color.Red;
+
+                    //    if (((Convert.ToInt16(hh) < 50)) && ((Convert.ToInt16(hh) > 20)))
+                    //        itmAlert.ForeColor = Color.Orange;
+
+                    //     if (((Convert.ToInt16(hh) <= 50)) && ((Convert.ToInt16(hh) > 20)))
+                    //         itmAlert.ForeColor = Color.Orange;
+
+                        if (RoundVal < 98.00)
+                            itmAVE.ForeColor = Color.Red;
+
+                        if((RoundVal<=99.00)&&(RoundVal>=98.00))
+                            itmAVE.ForeColor = Color.Orange;
+
+                         if(RoundVal == 100.00)
+                             itmAVE.ForeColor = Color.Green;
+
+                         TotalKioslCount++;
+
+                        if(RoundVal<100.00)
+                            Below100Persent++;
+
+                    listView_AVE_7_Day.Items.Add(itmAVE);
+                }
+            }
+
+            double AVEKiosk7Days =(100- (Convert.ToDouble(Below100Persent) / Convert.ToDouble(TotalKioslCount) * 100));
+
+            groupBox_KioskAVEUPTime.Text = "Last 7 Days AVE UpTime " + AVEKiosk7Days + "% " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "  ";
+
+            //if ((Variables.UPTime_Day[h] == TotDays) && (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
+           // {
+           //     Variables.UPTime_AVG_Kioks_UPTime[KioskIndex] = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+           //     Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+           //     Variables.UPTime_AVG_KioskNumber[KioskIndex] = Variables.KioskNumberList[i];
+           //     Variables.UPTime_AVG_KioskName[KioskIndex] = Variables.KioskNameList[i];
+           //     KioskIndex++;
+           // }
         }
     }
 }
