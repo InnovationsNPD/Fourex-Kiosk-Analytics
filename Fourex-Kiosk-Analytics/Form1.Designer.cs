@@ -898,7 +898,7 @@
             this.Controls.Add(this.button_TriggerMail);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "Error Detector Console Ver 1.40";
+            this.Text = "Error Detector Console Ver 1.41";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_DateSelect.ResumeLayout(false);
             this.groupBox_DateSelect.PerformLayout();

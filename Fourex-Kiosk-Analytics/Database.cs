@@ -834,7 +834,6 @@ namespace Fourex_Kiosk_Analytics
 
                 for (int h = 0; h < UPTimeIndexCounter; h++)
                 {
-                   
                     if (Index == 0)
                     {
                         if (Variables.UPTime_Day[h] == TotDays)
@@ -858,12 +857,20 @@ namespace Fourex_Kiosk_Analytics
                     {
                         if(Variables.KioskNumberList[i]!=null)
                         {
-                            if ((Variables.UPTime_Day[h] == TotDays) && (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
+                            if ((Variables.UPTime_Day[h] == TotDays)&& (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
                             {
-                                Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]   = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
-                                Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
-                                Variables.UPTime_AVG_KioskNumber[KioskIndex]    = Variables.KioskNumberList[i];
-                                Variables.UPTime_AVG_KioskName[KioskIndex]      = Variables.KioskNameList[i];
+                                if (Variables.KioskNumberList[i] == "0027")
+                                {
+                                    int jj = 0;
+                                }
+                                //Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]     = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+                                //Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex]   = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+
+                                Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]       = Variables.UPTime_AVG_Kioks_UPTime[KioskIndex] + Variables.UPTime_UPTimeMins[h];
+                                Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex]     = Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] + Variables.UPTime_DownTimeMins[h];
+                                
+                                Variables.UPTime_AVG_KioskNumber[KioskIndex]        = Variables.KioskNumberList[i];
+                                Variables.UPTime_AVG_KioskName[KioskIndex]          = Variables.KioskNameList[i];
                                 KioskIndex++;
                             }
                         }

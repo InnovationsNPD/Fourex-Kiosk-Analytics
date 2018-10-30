@@ -1974,6 +1974,7 @@ namespace Fourex_Kiosk_Analytics
         {
             int TotalKioslCount = 0;
             int Below100Persent = 0;
+            double TotalAVE     = 0;
 
             listView_AVE_7_Day.Items.Clear();
 
@@ -1993,53 +1994,35 @@ namespace Fourex_Kiosk_Analytics
 
                     arrAVE[1] = Convert.ToString(RoundVal);
 
-                    // arrAlert[1] = "test";
-
                     ListViewItem itmAVE;
 
                     listView_AVE_7_Day.Refresh();
 
                     itmAVE = new ListViewItem(arrAVE);
 
-                    //    if ((RoundVal == 11))
-                    //        itmAlert.ForeColor = Color.Red;
+                    if (RoundVal < 98.00)
+                        itmAVE.ForeColor = Color.Red;
 
-                    //    if (((Convert.ToInt16(hh) < 50)) && ((Convert.ToInt16(hh) > 20)))
-                    //        itmAlert.ForeColor = Color.Orange;
+                    if((RoundVal<=99.00)&&(RoundVal>=98.00))
+                        itmAVE.ForeColor = Color.Orange;
 
-                    //     if (((Convert.ToInt16(hh) <= 50)) && ((Convert.ToInt16(hh) > 20)))
-                    //         itmAlert.ForeColor = Color.Orange;
+                    if(RoundVal == 100.00)
+                        itmAVE.ForeColor = Color.Green;
 
-                        if (RoundVal < 98.00)
-                            itmAVE.ForeColor = Color.Red;
+                    TotalKioslCount++;
 
-                        if((RoundVal<=99.00)&&(RoundVal>=98.00))
-                            itmAVE.ForeColor = Color.Orange;
+                    TotalAVE = TotalAVE + RoundVal;
 
-                         if(RoundVal == 100.00)
-                             itmAVE.ForeColor = Color.Green;
-
-                         TotalKioslCount++;
-
-                        if(RoundVal<100.00)
-                            Below100Persent++;
+                    if(RoundVal<100.00)
+                        Below100Persent++;
 
                     listView_AVE_7_Day.Items.Add(itmAVE);
                 }
             }
 
-            double AVEKiosk7Days =(100- (Convert.ToDouble(Below100Persent) / Convert.ToDouble(TotalKioslCount) * 100));
+          //  double AVEKiosk7Days =(100- (Convert.ToDouble(Below100Persent) / Convert.ToDouble(TotalKioslCount) * 100));
 
-            groupBox_KioskAVEUPTime.Text = "Last 7 Days AVE UpTime " + AVEKiosk7Days + "% " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "  ";
-
-            //if ((Variables.UPTime_Day[h] == TotDays) && (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
-           // {
-           //     Variables.UPTime_AVG_Kioks_UPTime[KioskIndex] = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
-           //     Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
-           //     Variables.UPTime_AVG_KioskNumber[KioskIndex] = Variables.KioskNumberList[i];
-           //     Variables.UPTime_AVG_KioskName[KioskIndex] = Variables.KioskNameList[i];
-           //     KioskIndex++;
-           // }
+            groupBox_KioskAVEUPTime.Text = "Last 7 Days AVE UpTime " + Math.Round(TotalAVE/TotalKioslCount,2) + "% " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "  ";
         }
     }
 }
