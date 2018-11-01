@@ -16,6 +16,7 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Net.Sockets;
+using Microsoft.Office.Interop.Excel;
 
 namespace Fourex_Kiosk_Analytics
 {
@@ -1906,6 +1907,8 @@ namespace Fourex_Kiosk_Analytics
             Database.LoadPersistFileDetailsIntoDB();
             Database.CalculateDownTime(0);
             UpdateAVE7ListView();
+
+            AppendExcelTemplate();
         }
 
         private void checkBox_Failures_BV_CheckedChanged(object sender, EventArgs e)
@@ -2031,6 +2034,24 @@ namespace Fourex_Kiosk_Analytics
           //  double AVEKiosk7Days =(100- (Convert.ToDouble(Below100Persent) / Convert.ToDouble(TotalKioslCount) * 100));
 
             groupBox_KioskAVEUPTime.Text = "Last 7 Days AVE UpTime " + Math.Round(TotalAVE/TotalKioslCount,2) + "% " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "  ";
+        }
+
+        private void AppendExcelTemplate()
+        {
+            string ExcelPath = @"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTimeTemplate.xlsx";
+
+            Microsoft.Office.Interop.Excel.Application ExcelApplication = new Microsoft.Office.Interop.Excel.Application();
+
+            Workbook ExcelworkBook = ExcelApplication.Workbooks.Open(ExcelPath);
+
+            Worksheet ExcelworkSheet = ExcelworkBook.Worksheets.Item[2] as Worksheet;
+
+            ExcelworkSheet.Rows.Cells[1, 1] = "Test";
+
+            ExcelApplication.Application.ActiveWorkbook.SaveAs(@"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime2018-11-01-01.xlsx");
+            ExcelApplication.Application.Quit();
+            ExcelApplication.Quit();
+     
         }
     }
 }
