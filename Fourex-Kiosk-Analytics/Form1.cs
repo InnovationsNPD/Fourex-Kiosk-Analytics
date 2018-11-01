@@ -182,7 +182,7 @@ namespace Fourex_Kiosk_Analytics
 
                     string[] SplitString = reader["Mail"].ToString().Split(',');
 
-                    LocalArr[0] = reader["TxStamp"].ToString();
+                    LocalArr[0] = TimeZone(reader["TxStamp"].ToString());
                     LocalArr[1] = reader["KioskName"].ToString();
                     LocalArr[2] = reader["Status"].ToString();
 
@@ -1022,6 +1022,15 @@ namespace Fourex_Kiosk_Analytics
             return (SQLQ);
         }
 
+        public string TimeZone(string DateTimeString)
+        {
+            DateTime LocalDateTime = Convert.ToDateTime(DateTimeString);
+
+            string DateString =  LocalDateTime.AddHours(-2).ToString("yyyy-MM-dd HH:mm:ss");
+
+            return (DateString);
+        }
+
         private void DoLookDBUp()
         {
             textBox_ProgressInfo.Text = "Please Wait Running Database Qry..";
@@ -1136,7 +1145,7 @@ namespace Fourex_Kiosk_Analytics
 
                     DoEventCounter--;
 
-                    arr[0] = reader["TxStamp"].ToString();
+                    arr[0] = TimeZone(reader["TxStamp"].ToString());
                     arr[1] = reader["KioskName"].ToString();
                     arr[2] = reader["Mail"].ToString();
                     itm = new ListViewItem(arr);
@@ -1379,7 +1388,7 @@ namespace Fourex_Kiosk_Analytics
 
                         string TempKioksName = reader["KioskName"].ToString().Substring(0, reader["KioskName"].ToString().Length).TrimStart();
 
-                        arr[0] = reader["TxStamp"].ToString();
+                        arr[0] = TimeZone(reader["TxStamp"].ToString());
                         arr[1] = reader["KioskName"].ToString();
                         arr[2] = reader["Mail"].ToString();
                         itm = new ListViewItem(arr);
@@ -1676,7 +1685,6 @@ namespace Fourex_Kiosk_Analytics
 
             textBox_ImportStatus.Text = Variables.ImportCount.ToString();      
         }
-
 
         private void button_InportREMNOT_Click(object sender, EventArgs e)
         {

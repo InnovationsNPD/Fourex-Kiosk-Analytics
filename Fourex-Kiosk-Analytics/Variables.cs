@@ -83,6 +83,8 @@ namespace Fourex_Kiosk_Analytics
         public static int[] UPTime_TotalDownMins    = new int[7];
         public static double[] UPTime_PerCentage    = new double[7];
         public static string[] UPTime_DayName       = new string[7];
+
+        public static int TimeZoneAdjust = 2;
     }
 }
 
