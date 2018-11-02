@@ -12,7 +12,6 @@ using System.Web;
 using System.Net;
 using MySql.Data.MySqlClient;
 using System.IO;
-
 using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -620,7 +619,7 @@ namespace Fourex_Kiosk_Analytics
         {
             groupBox_UPTime.Text = "Minute By Minute Uptime for Estate. Last Update " + DateTime.Now.ToShortTimeString() + "  ";
 
-            Database.CalculateDownTime(Index);
+            Database.CalculateDownTime(Index,"");
 
             chart1.Series["Series1"].Points.Clear();
 
@@ -1905,10 +1904,10 @@ namespace Fourex_Kiosk_Analytics
         private void button1_Click_1(object sender, EventArgs e)
         {
             Database.LoadPersistFileDetailsIntoDB();
-            Database.CalculateDownTime(0);
+            Database.CalculateDownTime(0,"Excel");
             UpdateAVE7ListView();
 
-            AppendExcelTemplate();
+           // AppendExcelTemplate("Excel");
         }
 
         private void checkBox_Failures_BV_CheckedChanged(object sender, EventArgs e)

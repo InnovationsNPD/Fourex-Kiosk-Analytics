@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
 using System.Threading;
+using Microsoft.Office.Interop.Excel;
 
 namespace Fourex_Kiosk_Analytics
 {
@@ -676,13 +677,18 @@ namespace Fourex_Kiosk_Analytics
             return(Convert.ToInt16(Duration));
         }
 
-        public static void CalculateDownTime (int Index)
+        public static void SetupExcel ()
+        {
+                }
+
+        public static void CalculateDownTime (int Index, string Type)
         {
             int TotalMins           = 0;
             int Point               = 0;
             string StartTime        = "";
             string EndTime          = "";
             int UPTimeIndexCounter  = 0;
+            int KioskIndex          = 0;
 
             //-- Reset Array 
             for(int l = 0;l< Variables.UPTimeArraySize;l++)
@@ -727,9 +733,6 @@ namespace Fourex_Kiosk_Analytics
 
                             string DateStartString = DateStartSleep.ToString("yyyy-MM-dd HH:mm:ss");
                             string DateStopString = DateStopSleep.ToString("yyyy-MM-dd HH:mm:ss");
-
-                            //string DateStartString = Date.ToString("yyyy-MM-dd") + " " + Variables.KioskStartSleep[i];
-                            //string DateStopString = Date.ToString("yyyy-MM-dd") + " " + Variables.KioskStopSleep[i];
 
                             string ConnectionString = FourexConnectionString;
                             con = new MySqlConnection(ConnectionString);
@@ -830,7 +833,9 @@ namespace Fourex_Kiosk_Analytics
 
             for (int TotDays = 0; TotDays < 7; TotDays++)
             {
-                int KioskIndex = 0;
+               // int KioskIndex = 0;
+
+                  KioskIndex = 0;
 
                 for (int h = 0; h < UPTimeIndexCounter; h++)
                 {
@@ -859,18 +864,12 @@ namespace Fourex_Kiosk_Analytics
                         {
                             if ((Variables.UPTime_Day[h] == TotDays)&& (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
                             {
-                                if (Variables.KioskNumberList[i] == "0027")
-                                {
-                                    int jj = 0;
-                                }
-                                //Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]     = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
-                                //Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex]   = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
-
                                 Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]       = Variables.UPTime_AVG_Kioks_UPTime[KioskIndex] + Variables.UPTime_UPTimeMins[h];
                                 Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex]     = Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] + Variables.UPTime_DownTimeMins[h];
                                 
                                 Variables.UPTime_AVG_KioskNumber[KioskIndex]        = Variables.KioskNumberList[i];
                                 Variables.UPTime_AVG_KioskName[KioskIndex]          = Variables.KioskNameList[i];
+
                                 KioskIndex++;
                             }
                         }
@@ -884,6 +883,61 @@ namespace Fourex_Kiosk_Analytics
             }
    
             int gg = 0;
+
+            if (Type == "Excel")
+            {
+                string ExcelPath = @"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTimeTemplate.xlsx";
+
+                Microsoft.Office.Interop.Excel.Application ExcelApplication = new Microsoft.Office.Interop.Excel.Application();
+
+                Workbook ExcelworkBook = ExcelApplication.Workbooks.Open(ExcelPath);
+
+                ExcelApplication.Visible = true;
+
+                for (int SheetNumber = 0; SheetNumber < 7; SheetNumber++)
+                {
+                    Worksheet ExcelworkSheet = ExcelworkBook.Worksheets.Item[SheetNumber + 2] as Worksheet;
+
+                    int TempPointer = 0;
+                    int XAsis = 6;
+                    int YAsis = 9;
+                    int KioskPointer = 0;
+                    int h = 0;
+                    int LocalKioskIndex     = 1;
+                    int TotalDownTimeMins   = 0;
+                    int TotalUpTimeMins     = 0;
+
+                    while (Variables.KioskNumberList[LocalKioskIndex] != null)
+                    {
+                       if ((Form1.CheckKioskStatus(Variables.KioskNumberList[LocalKioskIndex]) == "Live") || (Form1.CheckKioskStatus(Variables.KioskNumberList[LocalKioskIndex]) == "OffLine"))
+                          {
+                            for (int i = 0; i < Variables.ListArraySize; i++)
+                            {
+                                if ((Variables.UPTime_Day[i] == SheetNumber) && (Variables.UPTime_KioskNumber[i] == Variables.KioskNumberList[LocalKioskIndex]))
+                                {
+
+                                    TotalDownTimeMins   = TotalDownTimeMins + Variables.UPTime_DownTimeMins[i];
+                                    TotalUpTimeMins     = TotalUpTimeMins + Variables.UPTime_UPTimeMins[i];
+                                    
+                                    string TempString = Variables.KioskNameList[LocalKioskIndex];
+
+                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis] = TempString; 
+
+                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
+
+                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 2] = Variables.UPTime_UPTimeMins[i];
+                                    ExcelworkSheet.Rows.Cells[XAsis++, YAsis + 3] = Variables.UPTime_DownTimeMins[i];
+                                }
+                            }   
+                        }
+                        LocalKioskIndex++;
+                    }     
+                }
+
+                ExcelApplication.Application.ActiveWorkbook.SaveAs(@"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + "Test1" + ".xlsx");
+                ExcelApplication.Application.Quit();
+                ExcelApplication.Quit();
+            }
         }
     }
 }
