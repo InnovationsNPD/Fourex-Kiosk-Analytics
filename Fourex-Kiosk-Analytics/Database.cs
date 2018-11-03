@@ -294,7 +294,7 @@ namespace Fourex_Kiosk_Analytics
 
             for (int i = 1; i < Variables.ListArraySize; i++)
             {
-                if (!(Variables.KioskNumberList[i] == ""))
+                if (!(Variables.KioskNumberList[i] == null))
                 {
                     string ConnectionString = FourexConnectionString;
                     con = new MySqlConnection(ConnectionString);
@@ -306,6 +306,11 @@ namespace Fourex_Kiosk_Analytics
 
                     cmd = new MySqlCommand(query);
                     cmd.Connection = con;
+
+                    if (i == 44)
+                    {
+                        int f  =78;
+                    }
 
                     try
                     {
@@ -744,7 +749,7 @@ namespace Fourex_Kiosk_Analytics
                                 int hj = 0; 
                             }
 
-                            System.Windows.Forms.Application.DoEvents();
+                            //  System.Windows.Forms.Application.DoEvents();
 
                             string query = "SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '" + Variables.KioskNumberList[i] + "' AND TxStamp >= '" + DateStopString + "' AND TxStamp <= '" + DateStartString + "' order by TxStamp asc";
 
@@ -894,6 +899,18 @@ namespace Fourex_Kiosk_Analytics
 
                 ExcelApplication.Visible = true;
 
+
+                //---------------------------------------
+                //----  Load Totals Into Excel ----------
+                //---------------------------------------
+
+
+
+
+                //---------------------------------------
+                //--- Now Load the days per days info ---
+                //---------------------------------------
+
                 for (int SheetNumber = 0; SheetNumber < 7; SheetNumber++)
                 {
                     Worksheet ExcelworkSheet = ExcelworkBook.Worksheets.Item[SheetNumber + 2] as Worksheet;
@@ -906,6 +923,7 @@ namespace Fourex_Kiosk_Analytics
                     int LocalKioskIndex     = 1;
                     int TotalDownTimeMins   = 0;
                     int TotalUpTimeMins     = 0;
+                    double TotalUPTimeAVE   = 0; 
 
                     while (Variables.KioskNumberList[LocalKioskIndex] != null)
                     {
@@ -915,7 +933,6 @@ namespace Fourex_Kiosk_Analytics
                             {
                                 if ((Variables.UPTime_Day[i] == SheetNumber) && (Variables.UPTime_KioskNumber[i] == Variables.KioskNumberList[LocalKioskIndex]))
                                 {
-
                                     TotalDownTimeMins   = TotalDownTimeMins + Variables.UPTime_DownTimeMins[i];
                                     TotalUpTimeMins     = TotalUpTimeMins + Variables.UPTime_UPTimeMins[i];
                                     
@@ -925,13 +942,23 @@ namespace Fourex_Kiosk_Analytics
 
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
 
+                                   
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 2] = Variables.UPTime_UPTimeMins[i];
                                     ExcelworkSheet.Rows.Cells[XAsis++, YAsis + 3] = Variables.UPTime_DownTimeMins[i];
                                 }
                             }   
                         }
                         LocalKioskIndex++;
-                    }     
+                    }
+
+                    XAsis = XAsis + 3;
+                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] =  Math.Round((100-((Convert.ToDouble(TotalDownTimeMins) / Convert.ToDouble(TotalUpTimeMins)) * 100)),2);
+                    ExcelworkSheet.Rows.Cells[XAsis, YAsis] = "Totals";
+                    ExcelworkSheet.Rows.Cells[XAsis, YAsis+2] = TotalUpTimeMins;
+                    ExcelworkSheet.Rows.Cells[XAsis, YAsis+3] = TotalDownTimeMins;
+
+                    TotalUpTimeMins     = 0;
+                    TotalDownTimeMins   = 0;
                 }
 
                 ExcelApplication.Application.ActiveWorkbook.SaveAs(@"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + "Test1" + ".xlsx");

@@ -124,6 +124,16 @@ namespace Fourex_Kiosk_Analytics
             UpdateRawLogsMainListView();
             PopulateAlertStatusComboBox();
             UpdateAlertKeyIndicators();
+
+            button_Tread_ReadMails.Enabled              = false;
+            button_Treads_AlertIndicator.Enabled        = false;
+            button_Threads_OffLineIndicator.Enabled     = false;
+            button_Treads_DownTime.Enabled              = false;
+
+            button_Tread_ReadMails.BackColor            = Color.LightGreen;
+            button_Treads_AlertIndicator.BackColor      = Color.LightGreen;
+            button_Threads_OffLineIndicator.BackColor   = Color.LightGreen;
+            button_Treads_DownTime.BackColor            = Color.LightGreen;
         }
 
         private void PopulateAlertStatusComboBox() 
@@ -529,10 +539,16 @@ namespace Fourex_Kiosk_Analytics
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            button_Tread_ReadMails.BackColor = Color.Red;
+            System.Windows.Forms.Application.DoEvents();
+
             timer1.Enabled = false;
             ReadMails();
             PopMail();
             timer1.Enabled = true;
+
+            System.Windows.Forms.Application.DoEvents();
+            button_Tread_ReadMails.BackColor = Color.LightGreen;
         }
 
        private void LoadKioskComboList()
@@ -1310,6 +1326,7 @@ namespace Fourex_Kiosk_Analytics
 
         private void timer2_Tick(object sender, EventArgs e)
         {
+
             LoadAlertListView();
         }
 
@@ -1334,17 +1351,30 @@ namespace Fourex_Kiosk_Analytics
 
         public void OffLineListViewUpdate_Tick(object sender, EventArgs e)
         {
+            button_Threads_OffLineIndicator.BackColor = Color.Red;
+            System.Windows.Forms.Application.DoEvents();
+
             Database.LoadFromDBOffLineListView();
             PopulateOffLineListView();
+
+            System.Windows.Forms.Application.DoEvents();
+            button_Threads_OffLineIndicator.BackColor = Color.LightGreen;
         }
 
         private void MainHouseKeeping_Tick(object sender, EventArgs e)
         {
+            button_Treads_AlertIndicator.BackColor = Color.Red;
+
+            System.Windows.Forms.Application.DoEvents();
+
             if (Variables.AlertManagerScreenUpdate == true)
             {
                 UpdateAlertKeyIndicators();  
                 Variables.AlertManagerScreenUpdate = false;
             }
+
+            button_Treads_AlertIndicator.BackColor = Color.LightGreen;
+            System.Windows.Forms.Application.DoEvents();
         }
 
         private void POPMail_Tick(object sender, EventArgs e)
@@ -1956,7 +1986,14 @@ namespace Fourex_Kiosk_Analytics
             if (comboBox_UPTimeKioskSelect.SelectedIndex >= 0)
             {
                 timer_UPTimeUpdate.Interval = 60000;
+
+                button_Treads_DownTime.BackColor = Color.Red;
+                System.Windows.Forms.Application.DoEvents();
+
                 UpdateUPTimeChart(comboBox_UPTimeKioskSelect.SelectedIndex);
+
+                button_Treads_DownTime.BackColor = Color.LightGreen;
+                System.Windows.Forms.Application.DoEvents();
             }
         }
 

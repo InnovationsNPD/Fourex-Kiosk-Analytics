@@ -105,6 +105,11 @@
             this.timer_UPTimeUpdate = new System.Windows.Forms.Timer(this.components);
             this.groupBox_KioskAVEUPTime = new System.Windows.Forms.GroupBox();
             this.listView_AVE_7_Day = new System.Windows.Forms.ListView();
+            this.button_Tread_ReadMails = new System.Windows.Forms.Button();
+            this.button_Treads_AlertIndicator = new System.Windows.Forms.Button();
+            this.button_Threads_OffLineIndicator = new System.Windows.Forms.Button();
+            this.button_Treads_FieldInfo = new System.Windows.Forms.Button();
+            this.button_Treads_DownTime = new System.Windows.Forms.Button();
             this.groupBox_DateSelect.SuspendLayout();
             this.groupBox_Alert.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -136,7 +141,7 @@
             this.textBox_ProgressInfo.Location = new System.Drawing.Point(12, 69);
             this.textBox_ProgressInfo.Margin = new System.Windows.Forms.Padding(6);
             this.textBox_ProgressInfo.Name = "textBox_ProgressInfo";
-            this.textBox_ProgressInfo.Size = new System.Drawing.Size(1184, 31);
+            this.textBox_ProgressInfo.Size = new System.Drawing.Size(756, 31);
             this.textBox_ProgressInfo.TabIndex = 4;
             // 
             // timer1
@@ -646,10 +651,10 @@
             // 
             // textBox_POPMail
             // 
-            this.textBox_POPMail.Location = new System.Drawing.Point(12, 33);
+            this.textBox_POPMail.Location = new System.Drawing.Point(12, 36);
             this.textBox_POPMail.Margin = new System.Windows.Forms.Padding(6);
             this.textBox_POPMail.Name = "textBox_POPMail";
-            this.textBox_POPMail.Size = new System.Drawing.Size(1184, 31);
+            this.textBox_POPMail.Size = new System.Drawing.Size(756, 31);
             this.textBox_POPMail.TabIndex = 30;
             // 
             // timer2
@@ -666,7 +671,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Size = new System.Drawing.Size(1212, 119);
+            this.groupBox1.Size = new System.Drawing.Size(792, 119);
             this.groupBox1.TabIndex = 31;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Mail Servers";
@@ -789,7 +794,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(3658, 44);
+            this.button1.Location = new System.Drawing.Point(3696, 35);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(105, 35);
             this.button1.TabIndex = 39;
@@ -870,11 +875,61 @@
             this.listView_AVE_7_Day.TabIndex = 25;
             this.listView_AVE_7_Day.UseCompatibleStateImageBehavior = false;
             // 
+            // button_Tread_ReadMails
+            // 
+            this.button_Tread_ReadMails.Location = new System.Drawing.Point(3251, 33);
+            this.button_Tread_ReadMails.Name = "button_Tread_ReadMails";
+            this.button_Tread_ReadMails.Size = new System.Drawing.Size(171, 44);
+            this.button_Tread_ReadMails.TabIndex = 31;
+            this.button_Tread_ReadMails.Text = "Read Mails";
+            this.button_Tread_ReadMails.UseVisualStyleBackColor = true;
+            // 
+            // button_Treads_AlertIndicator
+            // 
+            this.button_Treads_AlertIndicator.Location = new System.Drawing.Point(3251, 85);
+            this.button_Treads_AlertIndicator.Name = "button_Treads_AlertIndicator";
+            this.button_Treads_AlertIndicator.Size = new System.Drawing.Size(171, 41);
+            this.button_Treads_AlertIndicator.TabIndex = 43;
+            this.button_Treads_AlertIndicator.Text = "Alert Indicator";
+            this.button_Treads_AlertIndicator.UseVisualStyleBackColor = true;
+            // 
+            // button_Threads_OffLineIndicator
+            // 
+            this.button_Threads_OffLineIndicator.Location = new System.Drawing.Point(3251, 133);
+            this.button_Threads_OffLineIndicator.Name = "button_Threads_OffLineIndicator";
+            this.button_Threads_OffLineIndicator.Size = new System.Drawing.Size(171, 39);
+            this.button_Threads_OffLineIndicator.TabIndex = 44;
+            this.button_Threads_OffLineIndicator.Text = "OffLine Indicator";
+            this.button_Threads_OffLineIndicator.UseVisualStyleBackColor = true;
+            // 
+            // button_Treads_FieldInfo
+            // 
+            this.button_Treads_FieldInfo.Location = new System.Drawing.Point(3461, 33);
+            this.button_Treads_FieldInfo.Name = "button_Treads_FieldInfo";
+            this.button_Treads_FieldInfo.Size = new System.Drawing.Size(171, 39);
+            this.button_Treads_FieldInfo.TabIndex = 45;
+            this.button_Treads_FieldInfo.Text = "Field Indicator";
+            this.button_Treads_FieldInfo.UseVisualStyleBackColor = true;
+            // 
+            // button_Treads_DownTime
+            // 
+            this.button_Treads_DownTime.Location = new System.Drawing.Point(3461, 84);
+            this.button_Treads_DownTime.Name = "button_Treads_DownTime";
+            this.button_Treads_DownTime.Size = new System.Drawing.Size(171, 39);
+            this.button_Treads_DownTime.TabIndex = 46;
+            this.button_Treads_DownTime.Text = "DownTime";
+            this.button_Treads_DownTime.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(3828, 1915);
+            this.Controls.Add(this.button_Treads_DownTime);
+            this.Controls.Add(this.button_Treads_FieldInfo);
+            this.Controls.Add(this.button_Threads_OffLineIndicator);
+            this.Controls.Add(this.button_Treads_AlertIndicator);
+            this.Controls.Add(this.button_Tread_ReadMails);
             this.Controls.Add(this.groupBox_KioskAVEUPTime);
             this.Controls.Add(this.groupBox_UPTime);
             this.Controls.Add(this.button1);
@@ -898,7 +953,7 @@
             this.Controls.Add(this.button_TriggerMail);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "Error Detector Console Ver 1.44";
+            this.Text = "Error Detector Console Ver 1.47";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_DateSelect.ResumeLayout(false);
             this.groupBox_DateSelect.PerformLayout();
@@ -998,6 +1053,11 @@
         private System.Windows.Forms.Timer timer_UPTimeUpdate;
         private System.Windows.Forms.GroupBox groupBox_KioskAVEUPTime;
         private System.Windows.Forms.ListView listView_AVE_7_Day;
+        private System.Windows.Forms.Button button_Tread_ReadMails;
+        private System.Windows.Forms.Button button_Treads_AlertIndicator;
+        private System.Windows.Forms.Button button_Threads_OffLineIndicator;
+        private System.Windows.Forms.Button button_Treads_FieldInfo;
+        private System.Windows.Forms.Button button_Treads_DownTime;
     }
 }
 
