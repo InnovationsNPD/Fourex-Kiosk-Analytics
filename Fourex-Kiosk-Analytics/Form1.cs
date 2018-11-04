@@ -635,7 +635,9 @@ namespace Fourex_Kiosk_Analytics
         {
             groupBox_UPTime.Text = "Minute By Minute Uptime for Estate. Last Update " + DateTime.Now.ToShortTimeString() + "  ";
 
-            Database.CalculateDownTime(Index,"");
+           // if(DateTime.Now>=) Setup Time to send email 
+
+            Database.CalculateDownTime(Index,null,null);
 
             chart1.Series["Series1"].Points.Clear();
 
@@ -643,8 +645,20 @@ namespace Fourex_Kiosk_Analytics
 
             chart1.Series["Series1"].IsValueShownAsLabel = true;
 
+            //-- Find Min Value to Set Chraph Low point
+
+            double Value = Variables.UPTime_PerCentage[0];
+
+            for (int i = 0; i < 7; i++)
+            {
+                if (Value > Variables.UPTime_PerCentage[i])
+                {
+                    Value = Variables.UPTime_PerCentage[i];
+                }
+            }
+
             chart1.ChartAreas[0].AxisY.Maximum = 100;
-            chart1.ChartAreas[0].AxisY.Minimum = 0;
+            chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value);
 
             if (Index == 0)
             {
@@ -1933,13 +1947,20 @@ namespace Fourex_Kiosk_Analytics
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            
+            button_SendMail.Enabled = false;
+            button_SendMail.Text = "Wait Please Sending Mail.."; 
             button_Treads_DownTime.BackColor = Color.Red;
+
+            System.Windows.Forms.Application.DoEvents();
+
            // Database.LoadPersistFileDetailsIntoDB();
-            Database.CalculateDownTime(0,"Excel");
+            Database.CalculateDownTime(0, "Excel", textBox_MailAddress.Text);
             UpdateAVE7ListView();
             button_Treads_DownTime.BackColor = Color.LightGreen;
-
-           // AppendExcelTemplate("Excel");
+            button_SendMail.Text = "Send Mail";
+            button_SendMail.Enabled = true;
+            textBox_MailAddress.Text = "";
         }
 
         private void checkBox_Failures_BV_CheckedChanged(object sender, EventArgs e)

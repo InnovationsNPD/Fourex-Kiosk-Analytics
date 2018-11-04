@@ -5,6 +5,7 @@ using System.Text;
 using MySql.Data.MySqlClient;
 using System.Threading;
 using Microsoft.Office.Interop.Excel;
+using System.Net.Mail;
 
 namespace Fourex_Kiosk_Analytics
 {
@@ -629,6 +630,8 @@ namespace Fourex_Kiosk_Analytics
                     {
                         Fourex_Kiosk_Analytics.Database.AddAlert(KioskName, KioskNumber, "<<Alert>>,AutoMode,CreateAlert,ErrorConsole," + ErrorCode + " " + ErrorDescrition  + ",", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "Auto", "Open", DateTime.Now.Ticks);
 
+                        MailAlert(KioskName + " " + "<<Alert>>,AutoMode,CreateAlert,ErrorConsole," + ErrorCode + " " + ErrorDescrition );
+
                         Variables.AlertManagerScreenUpdate = true;
                     }
                 }
@@ -679,9 +682,9 @@ namespace Fourex_Kiosk_Analytics
 
         public static void SetupExcel ()
         {
-                }
+        }
 
-        public static void CalculateDownTime (int Index, string Type)
+        public static void CalculateDownTime (int Index, string Type, string SingleMailAddress)
         {
             int TotalMins           = 0;
             int Point               = 0;
@@ -892,9 +895,23 @@ namespace Fourex_Kiosk_Analytics
 
                 ExcelApplication.Visible = true;
 
-                //---------------------------------------
-                //----  Load Totals Into Excel ----------
-                //---------------------------------------
+                //------------------------------------------------------
+                //----  Load Totals Into Excel  (Last 7 days) ----------
+                //------------------------------------------------------
+
+                double LowValue = Variables.UPTime_PerCentage[0];
+
+                for (int i = 0; i < 7; i++)
+                {
+                    if (LowValue > Variables.UPTime_PerCentage[i])
+                    {
+                        LowValue = Variables.UPTime_PerCentage[i];
+                    }
+                }
+
+                // chart1.ChartAreas[0].AxisY.Maximum = 100;
+                // chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value);
+
 
                 int TotalXAsis = 3;
                 int TotalYAsis = 9;
@@ -947,6 +964,8 @@ namespace Fourex_Kiosk_Analytics
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1] = Math.Round((TotalsUPTimePersen / KioksCounted),2);
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 2] = TotalUpTime;
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 3] = TotalDownTime;
+
+                string AVEUpTime = Convert.ToString(Math.Round((TotalsUPTimePersen / KioksCounted), 2));
 
                 //---------------------------------------
                 //--- Now Load the days per days info ---
@@ -1004,12 +1023,84 @@ namespace Fourex_Kiosk_Analytics
                     TotalDownTimeMins   = 0;
                 }
 
-                string ff =  @"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ".xlsx";
+                string FileLocation =  "C:\\Fourex\\Fourex-Kiosk-Analytics\\FouexUpTime-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".xlsx";
+                string Subject = "Fourex AVE Uptime-> " + AVEUpTime + " % ->"+ DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
 
-                ExcelApplication.Application.ActiveWorkbook.SaveAs(@"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ".xlsx");
+                ExcelApplication.Application.ActiveWorkbook.SaveAs(FileLocation);
                 ExcelApplication.Application.Quit();
                 ExcelApplication.Quit();
+
+                Mail(FileLocation, Subject, "Bosy", SingleMailAddress);
+            }
+
+        }
+
+        public static void Mail(string FileLocation, string Subject, string Body, string SingleMail)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.inpd.co.za");
+
+                mail.From = new MailAddress("francois.maritz@fourex.co.za");
+
+                if (SingleMail == "")
+                {
+                    mail.To.Add("francois.maritz@quescom.co.za");
+                    mail.To.Add("eugene.langeveldt@quescom.co.za");
+
+                }
+                else
+                {                   
+                    mail.To.Add(SingleMail);
+                }
+
+                mail.Subject = Subject;
+          
+                mail.Attachments.Add(new Attachment(FileLocation));
+
+                mail.Body = "<< See attached Excel for Kiosk Uptime Statistics >>" + " " + Subject;
+
+                SmtpServer.Port = 587;
+                SmtpServer.Credentials = new System.Net.NetworkCredential("fourex@inpd.co.za", "1nn0_Ques2018");
+                SmtpServer.EnableSsl = false;
+
+                SmtpServer.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
+        public static void MailAlert(string Subject)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.inpd.co.za");
+
+                mail.From = new MailAddress("francois.maritz@fourex.co.za");
+
+                mail.To.Add("francois.maritz.gm@gmail.com");
+                mail.To.Add("eugene.langeveldt@quescom.co.za");
+                mail.To.Add("craig.godfrey@quescom.co.za");
+
+                mail.Subject = Subject;
+
+                mail.Body = "<< Auto Alert Created >>" + " " + Subject;
+
+                SmtpServer.Port = 587;
+                SmtpServer.Credentials = new System.Net.NetworkCredential("fourex@inpd.co.za", "1nn0_Ques2018");
+                SmtpServer.EnableSsl = false;
+
+                SmtpServer.Send(mail);
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }
+
 }
