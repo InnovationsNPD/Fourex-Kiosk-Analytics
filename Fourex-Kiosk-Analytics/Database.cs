@@ -307,11 +307,6 @@ namespace Fourex_Kiosk_Analytics
                     cmd = new MySqlCommand(query);
                     cmd.Connection = con;
 
-                    if (i == 44)
-                    {
-                        int f  =78;
-                    }
-
                     try
                     {
                         con.Open();
@@ -838,8 +833,6 @@ namespace Fourex_Kiosk_Analytics
 
             for (int TotDays = 0; TotDays < 7; TotDays++)
             {
-               // int KioskIndex = 0;
-
                   KioskIndex = 0;
 
                 for (int h = 0; h < UPTimeIndexCounter; h++)
@@ -899,13 +892,61 @@ namespace Fourex_Kiosk_Analytics
 
                 ExcelApplication.Visible = true;
 
-
                 //---------------------------------------
                 //----  Load Totals Into Excel ----------
                 //---------------------------------------
 
+                int TotalXAsis = 3;
+                int TotalYAsis = 9;
 
+                Worksheet ExcelworkSheet = ExcelworkBook.Worksheets.Item[1] as Worksheet;
 
+                ExcelworkSheet.Rows.Cells[2, 3] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+                for (int WeekDay = 0; WeekDay < 7; WeekDay++)
+                {
+                    ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = DateTime.Now.AddDays(-WeekDay).DayOfWeek.ToString();
+
+                    ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis+1] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage[WeekDay])),2);
+                }
+
+                TotalXAsis = 6;
+                TotalXAsis = 24;
+
+                double TotalsUPTimePersen = 0;
+                int KioksCounted = 0;
+
+                double tt = 0.0;
+                double TotalUpTime = 0;
+                double TotalDownTime = 0;
+
+                for (int i = 0; i < Variables.ListArraySize; i++)
+                {   
+                    if (Variables.UPTime_AVG_KioskNumber[i] != null)
+                    {
+                        tt = Math.Round((100 - ((Variables.UPTime_AVG_Kiosk_DownTime[i] / Variables.UPTime_AVG_Kioks_UPTime[i]) * 100)),2);
+
+                        TotalsUPTimePersen = TotalsUPTimePersen + tt;  
+                        TotalUpTime = TotalUpTime + Variables.UPTime_AVG_Kioks_UPTime[i];
+                        TotalDownTime = TotalDownTime + Variables.UPTime_AVG_Kiosk_DownTime[i];
+
+                        string TempString = Variables.UPTime_AVG_KioskName[i];
+
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = TempString;
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1] = tt;
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 2] = Variables.UPTime_AVG_Kioks_UPTime[i];
+                        ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis + 3] = Variables.UPTime_AVG_Kiosk_DownTime[i];
+
+                        KioksCounted++;
+                    }
+                }
+
+                TotalXAsis = TotalXAsis + 2;
+
+                ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = "Totals";
+                ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1] = Math.Round((TotalsUPTimePersen / KioksCounted),2);
+                ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 2] = TotalUpTime;
+                ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 3] = TotalDownTime;
 
                 //---------------------------------------
                 //--- Now Load the days per days info ---
@@ -913,17 +954,19 @@ namespace Fourex_Kiosk_Analytics
 
                 for (int SheetNumber = 0; SheetNumber < 7; SheetNumber++)
                 {
-                    Worksheet ExcelworkSheet = ExcelworkBook.Worksheets.Item[SheetNumber + 2] as Worksheet;
+                    ExcelworkSheet = ExcelworkBook.Worksheets.Item[SheetNumber + 2] as Worksheet;
 
-                    int TempPointer = 0;
+                    ExcelworkSheet.Rows.Cells[2, 3] = DateTime.Now.ToString(); 
+                    ExcelworkSheet.Rows.Cells[2, 7] = "Report Date";
+                    ExcelworkSheet.Rows.Cells[2, 9] = DateTime.Now.AddDays(-SheetNumber).ToString("yyyy/MM/dd");
+
                     int XAsis = 6;
                     int YAsis = 9;
-                    int KioskPointer = 0;
-                    int h = 0;
+                    //int h = 0;
                     int LocalKioskIndex     = 1;
                     int TotalDownTimeMins   = 0;
                     int TotalUpTimeMins     = 0;
-                    double TotalUPTimeAVE   = 0; 
+                    //double TotalUPTimeAVE   = 0; 
 
                     while (Variables.KioskNumberList[LocalKioskIndex] != null)
                     {
@@ -961,7 +1004,9 @@ namespace Fourex_Kiosk_Analytics
                     TotalDownTimeMins   = 0;
                 }
 
-                ExcelApplication.Application.ActiveWorkbook.SaveAs(@"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + "Test1" + ".xlsx");
+                string ff =  @"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ".xlsx";
+
+                ExcelApplication.Application.ActiveWorkbook.SaveAs(@"C:\Fourex\Fourex-Kiosk-Analytics\FouexUpTime-" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ".xlsx");
                 ExcelApplication.Application.Quit();
                 ExcelApplication.Quit();
             }

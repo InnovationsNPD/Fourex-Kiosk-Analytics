@@ -1933,9 +1933,11 @@ namespace Fourex_Kiosk_Analytics
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            Database.LoadPersistFileDetailsIntoDB();
+            button_Treads_DownTime.BackColor = Color.Red;
+           // Database.LoadPersistFileDetailsIntoDB();
             Database.CalculateDownTime(0,"Excel");
             UpdateAVE7ListView();
+            button_Treads_DownTime.BackColor = Color.LightGreen;
 
            // AppendExcelTemplate("Excel");
         }
@@ -2088,6 +2090,11 @@ namespace Fourex_Kiosk_Analytics
             ExcelApplication.Application.Quit();
             ExcelApplication.Quit();
      
+        }
+
+        private void button_Treads_DownTime_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

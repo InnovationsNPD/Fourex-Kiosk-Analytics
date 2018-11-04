@@ -919,6 +919,7 @@
             this.button_Treads_DownTime.TabIndex = 46;
             this.button_Treads_DownTime.Text = "DownTime";
             this.button_Treads_DownTime.UseVisualStyleBackColor = true;
+            this.button_Treads_DownTime.Click += new System.EventHandler(this.button_Treads_DownTime_Click);
             // 
             // Form1
             // 
