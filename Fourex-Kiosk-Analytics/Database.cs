@@ -758,6 +758,7 @@ namespace Fourex_Kiosk_Analytics
                             Point           = 0;
                             TotalMins       = 0;
 
+                            string TempString = null; 
                             try
                             {
                                 con.Open();
@@ -765,7 +766,14 @@ namespace Fourex_Kiosk_Analytics
 
                                 while (reader.Read())
                                 {
-                                    if (reader["KioskNumber"].ToString() == "0015")
+                                     TempString =  reader["idErrorLogs"].ToString();
+
+                                     if(TempString == "60748")
+                                     {
+                                         int hj = 0;
+                                     }
+
+                                    if (reader["KioskNumber"].ToString() == "0004")
                                     {
                                         int pp = 9;
                                     }
@@ -787,10 +795,10 @@ namespace Fourex_Kiosk_Analytics
                                     //----------------------------------------------
 
                                     DateTime Start = Convert.ToDateTime(StartTime.ToString());
-                                    string StartString = Start.ToString("HH:mm:ss");
+                                    string StartString = Start.ToString("yyyy-MM-dd HH:mm:ss");
 
                                     DateTime End = Convert.ToDateTime(EndTime.ToString());
-                                    string EndString = End.ToString("HH:mm:ss");
+                                    string EndString = End.ToString("yyyy-MM-dd HH:mm:ss");
 
                                     if (DateTime.Parse(Variables.KioskStopSleep[i]).Subtract(DateTime.Parse(StartString)).TotalMinutes < 30)
                                     {
@@ -803,6 +811,13 @@ namespace Fourex_Kiosk_Analytics
                                     }
 
                                     Duration = DateTime.Parse(EndString).Subtract(DateTime.Parse(StartString)).TotalMinutes;
+
+                                    if (Duration < 0)
+                                    {
+                                        int jk = 0;
+
+                                        Duration = 0;
+                                    }
                                 }
 
                                 TotalMins = CaculateTotalMinsPerDay(i,Days);
@@ -878,6 +893,10 @@ namespace Fourex_Kiosk_Analytics
                 }
             }
 
+             // '%<<--OK Access-->>%' 
+             // '%<< PROBLEM Sec PCB >> UI Interface Down%'
+            //  <<BOOT UP>>
+
             for (int TotDays = 0; TotDays < 7; TotDays++)
             {
                 Variables.UPTime_PerCentage[TotDays] = (100 - ((Convert.ToDouble(Variables.UPTime_TotalDownMins[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
@@ -911,7 +930,6 @@ namespace Fourex_Kiosk_Analytics
 
                 // chart1.ChartAreas[0].AxisY.Maximum = 100;
                 // chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value);
-
 
                 int TotalXAsis = 3;
                 int TotalYAsis = 9;
@@ -958,7 +976,7 @@ namespace Fourex_Kiosk_Analytics
                     }
                 }
 
-                TotalXAsis = TotalXAsis + 2;
+                TotalXAsis = TotalXAsis + 4;
 
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = "Totals";
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1] = Math.Round((TotalsUPTimePersen / KioksCounted),2);
@@ -1004,7 +1022,6 @@ namespace Fourex_Kiosk_Analytics
 
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
 
-                                   
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 2] = Variables.UPTime_UPTimeMins[i];
                                     ExcelworkSheet.Rows.Cells[XAsis++, YAsis + 3] = Variables.UPTime_DownTimeMins[i];
                                 }
@@ -1032,7 +1049,6 @@ namespace Fourex_Kiosk_Analytics
 
                 Mail(FileLocation, Subject, "Bosy", SingleMailAddress);
             }
-
         }
 
         public static void Mail(string FileLocation, string Subject, string Body, string SingleMail)

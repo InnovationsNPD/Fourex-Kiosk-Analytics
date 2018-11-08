@@ -658,7 +658,7 @@ namespace Fourex_Kiosk_Analytics
             }
 
             chart1.ChartAreas[0].AxisY.Maximum = 100;
-            chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value);
+            chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value-1);
 
             if (Index == 0)
             {
@@ -1946,8 +1946,7 @@ namespace Fourex_Kiosk_Analytics
         }
 
         private void button1_Click_1(object sender, EventArgs e)
-        {
-            
+        {   
             button_SendMail.Enabled = false;
             button_SendMail.Text = "Wait Please Sending Mail.."; 
             button_Treads_DownTime.BackColor = Color.Red;
