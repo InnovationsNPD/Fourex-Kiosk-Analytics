@@ -710,8 +710,6 @@ namespace Fourex_Kiosk_Analytics
                Variables.UPTime_DayName[i]          = "";
             }
 
-           //  SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '0037'  AND TxStamp >= '2018-10-24 06:00:00' AND TxStamp <= '2018-10-24 22:00:00' order by TxStamp desc;
-
             //--- Read DB out Database 
             string FourexConnectionString = "Server=localhost;Database=fourex;Uid=root;Pwd=maritz2580";
 
@@ -740,23 +738,46 @@ namespace Fourex_Kiosk_Analytics
                             string ConnectionString = FourexConnectionString;
                             con = new MySqlConnection(ConnectionString);
 
-                            //string query = "SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '0037'  AND TxStamp >= '2018-10-24 06:00:00' AND TxStamp <= '2018-10-24 22:00:00' order by TxStamp asc";
-
                             if (Variables.KioskNumberList[i] == "0015")
                             {
                                 int hj = 0; 
                             }
 
-                            //  System.Windows.Forms.Application.DoEvents();
 
-                            string query = "SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '" + Variables.KioskNumberList[i] + "' AND TxStamp >= '" + DateStopString + "' AND TxStamp <= '" + DateStartString + "' order by TxStamp asc";
+                            // '%<<--OK Access-->>%' 
+                            // '%<< PROBLEM Sec PCB >> UI Interface Down%'
+                            //  <<BOOT UP>>
+
+                            // string query = "SELECT * FROM fourex.errorlogs where Mail Like '%<< Maintenance ON >>%' AND KioskNumber = '" + Variables.KioskNumberList[i] + "' AND TxStamp >= '" + DateStopString + "' AND TxStamp <= '" + DateStartString + "' order by TxStamp asc";
+
+                            string OKAccess = "Mail Like '%<<--OK Access-->>%'";
+                            string UIDown   = "Mail Like '%<< PROBLEM Sec PCB >> UI Interface Down%'";
+                            string BootUp   = "Mail Like '%<<BOOT UP>>%'";
+                            string MMMode   = "Mail Like '%<< Maintenance ON >>%'";
+
+                            string query = "SELECT * FROM fourex.errorlogs where (" + MMMode + " OR " + OKAccess + " OR " + BootUp + ") AND KioskNumber = '" + Variables.KioskNumberList[i] + "' AND TxStamp >= '" + DateStopString + "' AND TxStamp <= '" + DateStartString + "' order by TxStamp asc";
 
                             cmd = new MySqlCommand(query);
                             cmd.Connection = con;
 
+                            DateTime FirstTX = DateTime.Now;
+                            DateTime SecondTX;
+
+                            int TxStampCounter = 0;
+
                             double Duration = 0;
                             Point           = 0;
                             TotalMins       = 0;
+
+                            int TotalKioskDownMinutes = 0;
+                            int OKLogInsCounter = 0; 
+                            
+                            //--- Reset Array Transaction ---
+                            //for(int j=0;j<100;j++)
+                            //{
+                            //    Variables.OKLogIns[j] ;
+                            //}
+
 
                             string TempString = null; 
                             try
@@ -766,26 +787,46 @@ namespace Fourex_Kiosk_Analytics
 
                                 while (reader.Read())
                                 {
-                                     TempString =  reader["idErrorLogs"].ToString();
-
-                                     if(TempString == "60748")
-                                     {
-                                         int hj = 0;
-                                     }
-
-                                    if (reader["KioskNumber"].ToString() == "0004")
+                                    //---------------------------------
+                                    //--- Check for Maintenace Mode ---
+                                    //---------------------------------
+                                    if (reader["Mail"].ToString().IndexOf("<< Maintenance ON >>") !=-1)
                                     {
-                                        int pp = 9;
+                                         TempString =  reader["idErrorLogs"].ToString();
+
+                                         if(TempString == "60748")
+                                         {
+                                             int hj = 0;
+                                         }
+
+                                        if (reader["KioskNumber"].ToString() == "0004")
+                                        {
+                                            int pp = 9;
+                                        }
+
+                                        if (Point == 0)
+                                        {
+                                               StartTime = reader["TxStamp"].ToString();
+                                        }
+
+                                        Point++;
+
+                                        EndTime = reader["TxStamp"].ToString();
                                     }
 
-                                    if (Point == 0)
+                                     //---------------------------
+                                    //--- Check Kioks Field MM ---
+                                    //----------------------------
+
+                                    if (reader["Mail"].ToString().IndexOf("<<--OK Access-->>") != -1)
                                     {
-                                        StartTime = reader["TxStamp"].ToString();
+                                       Variables.OKLogIns[OKLogInsCounter++] = Convert.ToDateTime(reader["TxStamp"].ToString());
                                     }
 
-                                    Point++;
-
-                                    EndTime = reader["TxStamp"].ToString();
+                                    if (reader["Mail"].ToString().IndexOf("<<BOOT UP>>") != -1)
+                                    {
+                                        TotalKioskDownMinutes = TotalKioskDownMinutes + 5;
+                                    }
                                 }
 
                                 if (Point > 0)
@@ -817,6 +858,32 @@ namespace Fourex_Kiosk_Analytics
                                         int jk = 0;
 
                                         Duration = 0;
+                                    }
+                                }
+
+                                if (OKLogInsCounter > 0)
+                                {
+                                    if (OKLogInsCounter == 1)
+                                    {
+                                        TotalKioskDownMinutes = TotalKioskDownMinutes + 15;
+                                    }
+                                    else
+                                    {
+                                        for (int j = 0; j < OKLogInsCounter; j++)
+                                        {
+                                            if (j == 0)
+                                            {
+                                                TotalKioskDownMinutes = TotalKioskDownMinutes + 15;
+                                            }
+
+                                            if (j < (OKLogInsCounter - 1)) //-- Look for last record  
+                                            {
+                                                Double ElapseMins = ((TimeSpan)(Variables.OKLogIns[j + 1] - Variables.OKLogIns[j])).TotalMinutes;
+
+                                                if (ElapseMins >= 15)
+                                                    TotalKioskDownMinutes = TotalKioskDownMinutes + 15;
+                                            }
+                                        }
                                     }
                                 }
 
@@ -893,9 +960,6 @@ namespace Fourex_Kiosk_Analytics
                 }
             }
 
-             // '%<<--OK Access-->>%' 
-             // '%<< PROBLEM Sec PCB >> UI Interface Down%'
-            //  <<BOOT UP>>
 
             for (int TotDays = 0; TotDays < 7; TotDays++)
             {
@@ -1064,7 +1128,20 @@ namespace Fourex_Kiosk_Analytics
                 {
                     mail.To.Add("francois.maritz@quescom.co.za");
                     mail.To.Add("eugene.langeveldt@quescom.co.za");
+                    mail.To.Add("Jane.Wade@coino.co.uk");
+                    mail.To.Add("Georgi.Mitov@coino.co.uk");
 
+                    DateTime date = DateTime.Now;
+
+                    string dateToday = " " + date.ToString("d");
+                    DayOfWeek day = DateTime.Now.DayOfWeek;
+                    string dayToday = day.ToString();
+
+                    if ((dayToday == "Monday"))
+                    {
+                        mail.To.Add("anthony.rice@coino.co.uk");
+                        mail.To.Add("Oliver.DuToit@coino.co.uk");
+                    }
                 }
                 else
                 {                   

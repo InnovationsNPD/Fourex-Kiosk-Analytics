@@ -608,7 +608,6 @@ namespace Fourex_Kiosk_Analytics
                 cmd.Connection.Close();
                 cmd.Dispose();
                 cmd.Connection.Dispose();
-
             }
             catch (Exception ex)
             {
@@ -1375,6 +1374,9 @@ namespace Fourex_Kiosk_Analytics
             button_Threads_OffLineIndicator.BackColor = Color.LightGreen;
         }
 
+
+      
+
         private void MainHouseKeeping_Tick(object sender, EventArgs e)
         {
             button_Treads_AlertIndicator.BackColor = Color.Red;
@@ -1389,6 +1391,9 @@ namespace Fourex_Kiosk_Analytics
 
             button_Treads_AlertIndicator.BackColor = Color.LightGreen;
             System.Windows.Forms.Application.DoEvents();
+
+            AutoMailTrigger();
+
         }
 
         private void POPMail_Tick(object sender, EventArgs e)
@@ -1945,21 +1950,36 @@ namespace Fourex_Kiosk_Analytics
             groupBox_AlertManager.Text = "Check Alert done. Last Update.. " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + " "; 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {   
+        private void AutoMailTrigger()
+        {
+            DateTime CurrentTime = DateTime.Now;
+
+            if ((CurrentTime >= (Convert.ToDateTime("06:00:00"))) && (CurrentTime <= (Convert.ToDateTime("06:00:10"))))
+            {
+                AutoDialyMail();
+            }
+        }
+
+        private void AutoDialyMail()
+        {
             button_SendMail.Enabled = false;
-            button_SendMail.Text = "Wait Please Sending Mail.."; 
+            button_SendMail.Text = "Wait Please Sending Mail..";
             button_Treads_DownTime.BackColor = Color.Red;
 
             System.Windows.Forms.Application.DoEvents();
 
-           // Database.LoadPersistFileDetailsIntoDB();
             Database.CalculateDownTime(0, "Excel", textBox_MailAddress.Text);
+
             UpdateAVE7ListView();
             button_Treads_DownTime.BackColor = Color.LightGreen;
             button_SendMail.Text = "Send Mail";
             button_SendMail.Enabled = true;
             textBox_MailAddress.Text = "";
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            AutoDialyMail();
         }
 
         private void checkBox_Failures_BV_CheckedChanged(object sender, EventArgs e)
