@@ -696,18 +696,22 @@ namespace Fourex_Kiosk_Analytics
             //-- Reset Array 
             for(int l = 0;l< Variables.UPTimeArraySize;l++)
             {
-                Variables.UPTime_DownTimeMins[l]    = 0;
-                Variables.UPTime_UPTimeMins[l]      = 0;
-                Variables.UPTime_KioskNumber[l]     = null;
-                Variables.UPTime_Day[l]             = 0;
+                Variables.UPTime_DownTimeMins[l]        = 0;
+                Variables.UPTime_UPTimeMins[l]          = 0;
+                Variables.UPTime_KioskNumber[l]         = null;
+                Variables.UPTime_Day[l]                 = 0;
+                Variables.UPTime_DownTime_FieldMM[l]    = 0;
             }
 
             for (int i = 0; i < 7; i++)
             {
-               Variables.UPTime_TotalMins[i]        = 0;
-               Variables.UPTime_TotalDownMins[i]    = 0;
-               Variables.UPTime_PerCentage[i]       = 0;
-               Variables.UPTime_DayName[i]          = "";
+               Variables.UPTime_TotalMins[i]            = 0;
+               Variables.UPTime_TotalDownMins[i]        = 0;
+               Variables.UpTime_TotalDownMins_FieldMM[i] = 0;
+               Variables.UPTime_PerCentage[i]           = 0;
+               Variables.UPTime_PerCentage__FieldMM[i] = 0;
+               Variables.UPTime_DayName[i]              = "";
+               Variables.UPTime_AVG_Kiosk_FieldMM[i]    = 0;
             }
 
             //--- Read DB out Database 
@@ -769,16 +773,9 @@ namespace Fourex_Kiosk_Analytics
                             Point           = 0;
                             TotalMins       = 0;
 
-                            int TotalKioskDownMinutes = 0;
+                            int TotalKiosk_FieldMM_Minutes = 0;
                             int OKLogInsCounter = 0; 
                             
-                            //--- Reset Array Transaction ---
-                            //for(int j=0;j<100;j++)
-                            //{
-                            //    Variables.OKLogIns[j] ;
-                            //}
-
-
                             string TempString = null; 
                             try
                             {
@@ -799,10 +796,7 @@ namespace Fourex_Kiosk_Analytics
                                              int hj = 0;
                                          }
 
-                                        if (reader["KioskNumber"].ToString() == "0004")
-                                        {
-                                            int pp = 9;
-                                        }
+                                      
 
                                         if (Point == 0)
                                         {
@@ -814,7 +808,12 @@ namespace Fourex_Kiosk_Analytics
                                         EndTime = reader["TxStamp"].ToString();
                                     }
 
-                                     //---------------------------
+                                    if (reader["KioskNumber"].ToString() == "0015")
+                                    {
+                                        int pp = 9;
+                                    }
+
+                                    //----------------------------
                                     //--- Check Kioks Field MM ---
                                     //----------------------------
 
@@ -823,9 +822,10 @@ namespace Fourex_Kiosk_Analytics
                                        Variables.OKLogIns[OKLogInsCounter++] = Convert.ToDateTime(reader["TxStamp"].ToString());
                                     }
 
+                                    //-- Doc/Add Every BootUp with 5 Minuts 
                                     if (reader["Mail"].ToString().IndexOf("<<BOOT UP>>") != -1)
                                     {
-                                        TotalKioskDownMinutes = TotalKioskDownMinutes + 5;
+                                        TotalKiosk_FieldMM_Minutes = TotalKiosk_FieldMM_Minutes + 5;
                                     }
                                 }
 
@@ -865,7 +865,7 @@ namespace Fourex_Kiosk_Analytics
                                 {
                                     if (OKLogInsCounter == 1)
                                     {
-                                        TotalKioskDownMinutes = TotalKioskDownMinutes + 15;
+                                        TotalKiosk_FieldMM_Minutes = TotalKiosk_FieldMM_Minutes + 15;
                                     }
                                     else
                                     {
@@ -873,7 +873,7 @@ namespace Fourex_Kiosk_Analytics
                                         {
                                             if (j == 0)
                                             {
-                                                TotalKioskDownMinutes = TotalKioskDownMinutes + 15;
+                                                TotalKiosk_FieldMM_Minutes = TotalKiosk_FieldMM_Minutes + 15;
                                             }
 
                                             if (j < (OKLogInsCounter - 1)) //-- Look for last record  
@@ -881,7 +881,7 @@ namespace Fourex_Kiosk_Analytics
                                                 Double ElapseMins = ((TimeSpan)(Variables.OKLogIns[j + 1] - Variables.OKLogIns[j])).TotalMinutes;
 
                                                 if (ElapseMins >= 15)
-                                                    TotalKioskDownMinutes = TotalKioskDownMinutes + 15;
+                                                    TotalKiosk_FieldMM_Minutes = TotalKiosk_FieldMM_Minutes + 15;
                                             }
                                         }
                                     }
@@ -889,10 +889,12 @@ namespace Fourex_Kiosk_Analytics
 
                                 TotalMins = CaculateTotalMinsPerDay(i,Days);
 
-                                Variables.UPTime_Day[UPTimeIndexCounter]            = Days;
-                                Variables.UPTime_DownTimeMins[UPTimeIndexCounter]   = Convert.ToInt16(Duration);
-                                Variables.UPTime_UPTimeMins[UPTimeIndexCounter]     = Convert.ToInt16(TotalMins);
-                                Variables.UPTime_KioskNumber[UPTimeIndexCounter]    = Variables.KioskNumberList[i];
+                                Variables.UPTime_Day[UPTimeIndexCounter]                    = Days;
+                               // Variables.UPTime_DownTimeMins[UPTimeIndexCounter]           = Convert.ToInt16(Duration) + TotalKiosk_FieldMM_Minutes; // Add MM and Field MM 
+                                Variables.UPTime_DownTimeMins[UPTimeIndexCounter]           = Convert.ToInt16(Duration) ; // Only MM
+                                Variables.UPTime_UPTimeMins[UPTimeIndexCounter]             = Convert.ToInt16(TotalMins);
+                                Variables.UPTime_KioskNumber[UPTimeIndexCounter]            = Variables.KioskNumberList[i];
+                                Variables.UPTime_DownTime_FieldMM[UPTimeIndexCounter]       = TotalKiosk_FieldMM_Minutes;
 
                                 UPTimeIndexCounter++;
 
@@ -926,16 +928,18 @@ namespace Fourex_Kiosk_Analytics
                     {
                         if (Variables.UPTime_Day[h] == TotDays)
                         {
-                            Variables.UPTime_TotalMins[TotDays] = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
-                            Variables.UPTime_TotalDownMins[TotDays] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                            Variables.UPTime_TotalMins[TotDays]                 = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+                            Variables.UPTime_TotalDownMins[TotDays]             = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                            Variables.UpTime_TotalDownMins_FieldMM[TotDays]     = Variables.UpTime_TotalDownMins_FieldMM[TotDays] + Variables.UPTime_DownTime_FieldMM[h];
                         }
                     }
                     else
                     {
                         if ((Variables.UPTime_Day[h] == TotDays)&&(Variables.UPTime_KioskNumber[h]==Variables.KioskNumberList[Index]))
                         {
-                            Variables.UPTime_TotalMins[TotDays] = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
-                            Variables.UPTime_TotalDownMins[TotDays] = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                            Variables.UPTime_TotalMins[TotDays]                 = Variables.UPTime_TotalMins[TotDays] + Variables.UPTime_UPTimeMins[h];
+                            Variables.UPTime_TotalDownMins[TotDays]             = Variables.UPTime_TotalDownMins[TotDays] + Variables.UPTime_DownTimeMins[h];
+                            Variables.UpTime_TotalDownMins_FieldMM[TotDays]     = Variables.UpTime_TotalDownMins_FieldMM[TotDays] + Variables.UPTime_DownTime_FieldMM[h];
                         }
                     }
 
@@ -948,7 +952,9 @@ namespace Fourex_Kiosk_Analytics
                             if ((Variables.UPTime_Day[h] == TotDays)&& (Variables.UPTime_KioskNumber[h] == Variables.KioskNumberList[i]))
                             {
                                 Variables.UPTime_AVG_Kioks_UPTime[KioskIndex]       = Variables.UPTime_AVG_Kioks_UPTime[KioskIndex] + Variables.UPTime_UPTimeMins[h];
+                               // Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex]   = Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] + Variables.UPTime_DownTimeMins[h] + Variables.UPTime_AVG_Kiosk_FieldMM[KioskIndex] ;
                                 Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex]     = Variables.UPTime_AVG_Kiosk_DownTime[KioskIndex] + Variables.UPTime_DownTimeMins[h];
+                                Variables.UPTime_AVG_Kiosk_FieldMM[KioskIndex]      = Variables.UPTime_AVG_Kiosk_FieldMM[KioskIndex] + Variables.UPTime_DownTime_FieldMM[h];
                                 
                                 Variables.UPTime_AVG_KioskNumber[KioskIndex]        = Variables.KioskNumberList[i];
                                 Variables.UPTime_AVG_KioskName[KioskIndex]          = Variables.KioskNameList[i];
@@ -963,7 +969,14 @@ namespace Fourex_Kiosk_Analytics
 
             for (int TotDays = 0; TotDays < 7; TotDays++)
             {
-                Variables.UPTime_PerCentage[TotDays] = (100 - ((Convert.ToDouble(Variables.UPTime_TotalDownMins[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
+               //-----------------------
+               //--- Before Field MM ---
+               //-----------------------
+               // Variables.UPTime_PerCentage[TotDays] = (100 - ((Convert.ToDouble(Variables.UPTime_TotalDownMins[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
+               // Variables.UPTime_PerCentage__FieldMM[TotDays] = (((Convert.ToDouble(Variables.UpTime_TotalDownMins_FieldMM[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
+
+                Variables.UPTime_PerCentage[TotDays] = (100 - ((Convert.ToDouble(Variables.UPTime_TotalDownMins[TotDays] + Variables.UpTime_TotalDownMins_FieldMM[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
+                Variables.UPTime_PerCentage__FieldMM[TotDays] = (((Convert.ToDouble(Variables.UpTime_TotalDownMins_FieldMM[TotDays]) / Convert.ToDouble(Variables.UPTime_TotalMins[TotDays])) * 100));
             }
    
             int gg = 0;
@@ -1006,7 +1019,9 @@ namespace Fourex_Kiosk_Analytics
                 {
                     ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = DateTime.Now.AddDays(-WeekDay).DayOfWeek.ToString();
 
-                    ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis+1] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage[WeekDay])),2);
+                    ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis+1] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage[WeekDay])),2);
+
+                    ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis + 2] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage__FieldMM [WeekDay])), 2);
                 }
 
                 TotalXAsis = 6;
@@ -1015,26 +1030,36 @@ namespace Fourex_Kiosk_Analytics
                 double TotalsUPTimePersen = 0;
                 int KioksCounted = 0;
 
-                double tt = 0.0;
-                double TotalUpTime = 0;
-                double TotalDownTime = 0;
+                double tt               = 0.0;
+                double ff               = 0.0;
+                double TotalUpTime      = 0;
+                double TotalDownTime    = 0;
+                double TotalFieldMins      = 0;
 
                 for (int i = 0; i < Variables.ListArraySize; i++)
                 {   
                     if (Variables.UPTime_AVG_KioskNumber[i] != null)
                     {
-                        tt = Math.Round((100 - ((Variables.UPTime_AVG_Kiosk_DownTime[i] / Variables.UPTime_AVG_Kioks_UPTime[i]) * 100)),2);
+                        //--- Before FieldMM --
+                       // tt = Math.Round((100 - ((Variables.UPTime_AVG_Kiosk_DownTime[i] / Variables.UPTime_AVG_Kioks_UPTime[i]) * 100)),2);
+                      //  ff = Math.Round((((Variables.UPTime_AVG_Kiosk_FieldMM[i] / Variables.UPTime_AVG_Kioks_UPTime[i]) * 100)), 2);
+
+                        tt = Math.Round((100 - (((Variables.UPTime_AVG_Kiosk_DownTime[i] + Variables.UPTime_AVG_Kiosk_FieldMM[i] )/ Variables.UPTime_AVG_Kioks_UPTime[i]) * 100)), 2);
+                        ff = Math.Round((((Variables.UPTime_AVG_Kiosk_FieldMM[i] / Variables.UPTime_AVG_Kioks_UPTime[i]) * 100)), 2);
 
                         TotalsUPTimePersen = TotalsUPTimePersen + tt;  
                         TotalUpTime = TotalUpTime + Variables.UPTime_AVG_Kioks_UPTime[i];
                         TotalDownTime = TotalDownTime + Variables.UPTime_AVG_Kiosk_DownTime[i];
+                        TotalFieldMins = TotalFieldMins + Variables.UPTime_AVG_Kiosk_FieldMM[i];
 
                         string TempString = Variables.UPTime_AVG_KioskName[i];
 
-                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = TempString;
-                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1] = tt;
-                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 2] = Variables.UPTime_AVG_Kioks_UPTime[i];
-                        ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis + 3] = Variables.UPTime_AVG_Kiosk_DownTime[i];
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis]           = TempString;
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1]       = tt;
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 2]       = Variables.UPTime_AVG_Kioks_UPTime[i];
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 3]       = Variables.UPTime_AVG_Kiosk_DownTime[i];
+                        ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 4]       = Variables.UPTime_AVG_Kiosk_FieldMM[i];
+                        ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis + 5]     = ff;
 
                         KioksCounted++;
                     }
@@ -1046,6 +1071,7 @@ namespace Fourex_Kiosk_Analytics
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 1] = Math.Round((TotalsUPTimePersen / KioksCounted),2);
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 2] = TotalUpTime;
                 ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 3] = TotalDownTime;
+                ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis + 4] = TotalFieldMins;
 
                 string AVEUpTime = Convert.ToString(Math.Round((TotalsUPTimePersen / KioksCounted), 2));
 
@@ -1067,8 +1093,8 @@ namespace Fourex_Kiosk_Analytics
                     int LocalKioskIndex     = 1;
                     int TotalDownTimeMins   = 0;
                     int TotalUpTimeMins     = 0;
-                    //double TotalUPTimeAVE   = 0; 
-
+                    int TotalFieldMMMins    = 0;
+                  
                     while (Variables.KioskNumberList[LocalKioskIndex] != null)
                     {
                        if ((Form1.CheckKioskStatus(Variables.KioskNumberList[LocalKioskIndex]) == "Live") || (Form1.CheckKioskStatus(Variables.KioskNumberList[LocalKioskIndex]) == "OffLine"))
@@ -1079,15 +1105,21 @@ namespace Fourex_Kiosk_Analytics
                                 {
                                     TotalDownTimeMins   = TotalDownTimeMins + Variables.UPTime_DownTimeMins[i];
                                     TotalUpTimeMins     = TotalUpTimeMins + Variables.UPTime_UPTimeMins[i];
+                                    TotalFieldMMMins    = TotalFieldMMMins + Variables.UPTime_DownTime_FieldMM[i];  
                                     
                                     string TempString = Variables.KioskNameList[LocalKioskIndex];
 
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis] = TempString; 
 
-                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
+                                    //-- Before FieldMM
+                                    //ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
+
+                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]+Variables.UPTime_DownTime_FieldMM[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
 
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 2] = Variables.UPTime_UPTimeMins[i];
-                                    ExcelworkSheet.Rows.Cells[XAsis++, YAsis + 3] = Variables.UPTime_DownTimeMins[i];
+                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 3] = Variables.UPTime_DownTimeMins[i];
+                                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 4] = Variables.UPTime_DownTime_FieldMM[i];
+                                    ExcelworkSheet.Rows.Cells[XAsis++, YAsis + 5] = Math.Round((((Convert.ToDouble(Variables.UPTime_DownTime_FieldMM[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i])) * 100)), 2); 
                                 }
                             }   
                         }
@@ -1099,6 +1131,7 @@ namespace Fourex_Kiosk_Analytics
                     ExcelworkSheet.Rows.Cells[XAsis, YAsis] = "Totals";
                     ExcelworkSheet.Rows.Cells[XAsis, YAsis+2] = TotalUpTimeMins;
                     ExcelworkSheet.Rows.Cells[XAsis, YAsis+3] = TotalDownTimeMins;
+                    ExcelworkSheet.Rows.Cells[XAsis, YAsis+4] = TotalFieldMMMins;
 
                     TotalUpTimeMins     = 0;
                     TotalDownTimeMins   = 0;

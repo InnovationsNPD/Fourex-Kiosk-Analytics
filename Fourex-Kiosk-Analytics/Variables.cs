@@ -74,24 +74,25 @@ namespace Fourex_Kiosk_Analytics
 
         public static int[]     UPTime_UPTimeMins                   = new int[UPTimeArraySize];
         public static int[]     UPTime_DownTimeMins                 = new int[UPTimeArraySize];
-        public static int[]     UPTime_DownTimeMaintenance          = new int[UPTimeArraySize]; 
+        public static int[]     UPTime_DownTime_FieldMM             = new int[UPTimeArraySize]; 
         public static string[]  UPTime_KioskNumber                  = new string[UPTimeArraySize];
         public static int[]     UPTime_Day                          = new int[UPTimeArraySize];
 
         public static double[] UPTime_AVG_Kioks_UPTime              = new double[ListArraySize];
         public static double[] UPTime_AVG_Kiosk_DownTime            = new double[ListArraySize];
-        public static double[] UPTime_AVG_Kiosk_DownTimeMaintenance = new double[ListArraySize];
+        public static double[] UPTime_AVG_Kiosk_FieldMM             = new double[ListArraySize];
         public static string[] UPTime_AVG_KioskNumber               = new string[ListArraySize];
         public static string[] UPTime_AVG_KioskName                 = new string[ListArraySize];     
 
         public static int[]     UPTime_TotalMins                    = new int[7];
         public static int[]     UPTime_TotalDownMins                = new int[7];
-        public static int[]     UpTime_TotalDownMinsTimeMaintenance = new int[7];
+        public static int[]     UpTime_TotalDownMins_FieldMM        = new int[7];
         public static double[]  UPTime_PerCentage                   = new double[7];
+        public static double[]  UPTime_PerCentage__FieldMM          = new double[7];
         public static string[]  UPTime_DayName                      = new string[7];
 
         public static int TimeZoneAdjust = 2;
-       
+
     }
 }
 

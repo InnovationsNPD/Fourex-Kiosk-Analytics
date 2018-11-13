@@ -32,6 +32,7 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.button_TriggerMail = new System.Windows.Forms.Button();
             this.textBox_ProgressInfo = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -97,7 +98,6 @@
             this.editAlertManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox_AlertManager = new System.Windows.Forms.GroupBox();
             this.button_SendMail = new System.Windows.Forms.Button();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox_UPTime = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.comboBox_UPTimeKioskSelect = new System.Windows.Forms.ComboBox();
@@ -111,6 +111,7 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.textBox_MailAddress = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox_DateSelect.SuspendLayout();
             this.groupBox_Alert.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -121,10 +122,10 @@
             this.groupBox_Notification.SuspendLayout();
             this.contextMenuStrip_AlertManager.SuspendLayout();
             this.groupBox_AlertManager.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.groupBox_UPTime.SuspendLayout();
             this.groupBox_KioskAVEUPTime.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // button_TriggerMail
@@ -792,28 +793,11 @@
             this.button_SendMail.UseVisualStyleBackColor = true;
             this.button_SendMail.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // chart1
-            // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(6, 69);
-            this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            series1.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(645, 564);
-            this.chart1.TabIndex = 40;
-            this.chart1.Text = "chart1";
-            // 
             // groupBox_UPTime
             // 
+            this.groupBox_UPTime.Controls.Add(this.chart1);
             this.groupBox_UPTime.Controls.Add(this.label4);
             this.groupBox_UPTime.Controls.Add(this.comboBox_UPTimeKioskSelect);
-            this.groupBox_UPTime.Controls.Add(this.chart1);
             this.groupBox_UPTime.Location = new System.Drawing.Point(1553, 1210);
             this.groupBox_UPTime.Name = "groupBox_UPTime";
             this.groupBox_UPTime.Size = new System.Drawing.Size(657, 647);
@@ -931,6 +915,28 @@
             this.label3.TabIndex = 49;
             this.label3.Text = "Enter Single Mail Address";
             // 
+            // chart1
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(29, 73);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series2.Legend = "Legend1";
+            series2.Name = "Series2";
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Size = new System.Drawing.Size(628, 560);
+            this.chart1.TabIndex = 43;
+            this.chart1.Text = "chart1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -977,11 +983,11 @@
             this.groupBox_Notification.ResumeLayout(false);
             this.contextMenuStrip_AlertManager.ResumeLayout(false);
             this.groupBox_AlertManager.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.groupBox_UPTime.ResumeLayout(false);
             this.groupBox_UPTime.PerformLayout();
             this.groupBox_KioskAVEUPTime.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1054,7 +1060,6 @@
         private System.Windows.Forms.CheckBox checkBox_Failures_ND_USD;
         private System.Windows.Forms.CheckBox checkBox_Failures_ND_EUR;
         private System.Windows.Forms.CheckBox checkBox_Failures_ND_GBP;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.GroupBox groupBox_UPTime;
         private System.Windows.Forms.ComboBox comboBox_UPTimeKioskSelect;
         private System.Windows.Forms.Label label4;
@@ -1068,6 +1073,7 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TextBox textBox_MailAddress;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
     }
 }
 

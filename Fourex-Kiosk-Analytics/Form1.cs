@@ -644,6 +644,12 @@ namespace Fourex_Kiosk_Analytics
 
             chart1.Series["Series1"].IsValueShownAsLabel = true;
 
+            chart1.Series["Series2"].Points.Clear();
+
+            chart1.Series["Series2"].IsVisibleInLegend = false;
+
+            chart1.Series["Series2"].IsValueShownAsLabel = true;
+
             //-- Find Min Value to Set Chraph Low point
 
             double Value = Variables.UPTime_PerCentage[0];
@@ -657,20 +663,42 @@ namespace Fourex_Kiosk_Analytics
             }
 
             chart1.ChartAreas[0].AxisY.Maximum = 100;
-            chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value-1);
+            chart1.ChartAreas[0].AxisY.Minimum = Convert.ToInt16(Value-2);
+
+            double FieldMMPer = 0.0; 
 
             if (Index == 0)
             {
                 for (int i = 0; i < 7; i++)
                 {
+                    if (Variables.UPTime_PerCentage[i] < Variables.UPTime_PerCentage__FieldMM[i])
+                    {
+                        FieldMMPer = Variables.UPTime_PerCentage__FieldMM[i] - Variables.UPTime_PerCentage[i];
+                    }
+                    else
+                    {
+                        FieldMMPer = 0;
+                    }
+
                     chart1.Series["Series1"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
+                    chart1.Series["Series2"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage__FieldMM[i], 2));
                 }
             }
             else
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    chart1.Series["Series1"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
+                    if (Variables.UPTime_PerCentage[i] < Variables.UPTime_PerCentage__FieldMM[i])
+                    {
+                        FieldMMPer = Variables.UPTime_PerCentage__FieldMM[i] - Variables.UPTime_PerCentage[i];
+                    }
+                    else
+                    {
+                        FieldMMPer = 0;
+                    }
+
+                    chart1.Series["Series2"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
+                    chart1.Series["Series2"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage__FieldMM[i], 2));
                 }
             }
 
@@ -1373,9 +1401,6 @@ namespace Fourex_Kiosk_Analytics
             System.Windows.Forms.Application.DoEvents();
             button_Threads_OffLineIndicator.BackColor = Color.LightGreen;
         }
-
-
-      
 
         private void MainHouseKeeping_Tick(object sender, EventArgs e)
         {
@@ -2133,6 +2158,11 @@ namespace Fourex_Kiosk_Analytics
         }
 
         private void button_Treads_DownTime_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chart1_Click(object sender, EventArgs e)
         {
 
         }
