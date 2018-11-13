@@ -670,16 +670,7 @@ namespace Fourex_Kiosk_Analytics
             if (Index == 0)
             {
                 for (int i = 0; i < 7; i++)
-                {
-                    if (Variables.UPTime_PerCentage[i] < Variables.UPTime_PerCentage__FieldMM[i])
-                    {
-                        FieldMMPer = Variables.UPTime_PerCentage__FieldMM[i] - Variables.UPTime_PerCentage[i];
-                    }
-                    else
-                    {
-                        FieldMMPer = 0;
-                    }
-
+                {                  
                     chart1.Series["Series1"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
                     chart1.Series["Series2"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage__FieldMM[i], 2));
                 }
@@ -688,15 +679,6 @@ namespace Fourex_Kiosk_Analytics
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    if (Variables.UPTime_PerCentage[i] < Variables.UPTime_PerCentage__FieldMM[i])
-                    {
-                        FieldMMPer = Variables.UPTime_PerCentage__FieldMM[i] - Variables.UPTime_PerCentage[i];
-                    }
-                    else
-                    {
-                        FieldMMPer = 0;
-                    }
-
                     chart1.Series["Series2"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage[i], 2));
                     chart1.Series["Series2"].Points.AddXY(Variables.UPTime_DayName[i], Math.Round(Variables.UPTime_PerCentage__FieldMM[i], 2));
                 }

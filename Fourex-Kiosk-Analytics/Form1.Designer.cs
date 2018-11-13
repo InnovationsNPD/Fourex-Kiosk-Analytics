@@ -99,6 +99,7 @@
             this.groupBox_AlertManager = new System.Windows.Forms.GroupBox();
             this.button_SendMail = new System.Windows.Forms.Button();
             this.groupBox_UPTime = new System.Windows.Forms.GroupBox();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label4 = new System.Windows.Forms.Label();
             this.comboBox_UPTimeKioskSelect = new System.Windows.Forms.ComboBox();
             this.timer_UPTimeUpdate = new System.Windows.Forms.Timer(this.components);
@@ -111,7 +112,6 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.textBox_MailAddress = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox_DateSelect.SuspendLayout();
             this.groupBox_Alert.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -123,9 +123,9 @@
             this.contextMenuStrip_AlertManager.SuspendLayout();
             this.groupBox_AlertManager.SuspendLayout();
             this.groupBox_UPTime.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.groupBox_KioskAVEUPTime.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // button_TriggerMail
@@ -805,6 +805,30 @@
             this.groupBox_UPTime.TabStop = false;
             this.groupBox_UPTime.Text = "Minute By Minute Uptime for Estate. Last Update ";
             // 
+            // chart1
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(29, 73);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series2.Legend = "Legend1";
+            series2.Name = "Series2";
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Size = new System.Drawing.Size(628, 560);
+            this.chart1.TabIndex = 43;
+            this.chart1.Text = "chart1";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -915,28 +939,6 @@
             this.label3.TabIndex = 49;
             this.label3.Text = "Enter Single Mail Address";
             // 
-            // chart1
-            // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(29, 73);
-            this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
-            series2.Legend = "Legend1";
-            series2.Name = "Series2";
-            this.chart1.Series.Add(series1);
-            this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(628, 560);
-            this.chart1.TabIndex = 43;
-            this.chart1.Text = "chart1";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -967,7 +969,7 @@
             this.Controls.Add(this.button_TriggerMail);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "Error Detector Console Ver 1.53";
+            this.Text = "Error Detector Console Ver 1.56";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_DateSelect.ResumeLayout(false);
             this.groupBox_DateSelect.PerformLayout();
@@ -985,9 +987,9 @@
             this.groupBox_AlertManager.ResumeLayout(false);
             this.groupBox_UPTime.ResumeLayout(false);
             this.groupBox_UPTime.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.groupBox_KioskAVEUPTime.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

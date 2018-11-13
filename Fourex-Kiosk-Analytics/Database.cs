@@ -796,8 +796,6 @@ namespace Fourex_Kiosk_Analytics
                                              int hj = 0;
                                          }
 
-                                      
-
                                         if (Point == 0)
                                         {
                                                StartTime = reader["TxStamp"].ToString();
@@ -1019,7 +1017,7 @@ namespace Fourex_Kiosk_Analytics
                 {
                     ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis] = DateTime.Now.AddDays(-WeekDay).DayOfWeek.ToString();
 
-                    ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis+1] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage[WeekDay])),2);
+                    ExcelworkSheet.Rows.Cells[TotalXAsis, TotalYAsis+1] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage[WeekDay] - Variables.UPTime_PerCentage__FieldMM[WeekDay])),2);
 
                     ExcelworkSheet.Rows.Cells[TotalXAsis++, TotalYAsis + 2] = Math.Round((Convert.ToDouble(Variables.UPTime_PerCentage__FieldMM [WeekDay])), 2);
                 }
@@ -1113,7 +1111,6 @@ namespace Fourex_Kiosk_Analytics
 
                                     //-- Before FieldMM
                                     //ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
-
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100-((Convert.ToDouble(Variables.UPTime_DownTimeMins[i]+Variables.UPTime_DownTime_FieldMM[i]) / Convert.ToDouble(Variables.UPTime_UPTimeMins[i]))*100)),2);
 
                                     ExcelworkSheet.Rows.Cells[XAsis, YAsis + 2] = Variables.UPTime_UPTimeMins[i];
@@ -1127,7 +1124,7 @@ namespace Fourex_Kiosk_Analytics
                     }
 
                     XAsis = XAsis + 3;
-                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] =  Math.Round((100-((Convert.ToDouble(TotalDownTimeMins) / Convert.ToDouble(TotalUpTimeMins)) * 100)),2);
+                    ExcelworkSheet.Rows.Cells[XAsis, YAsis + 1] = Math.Round((100 - ((Convert.ToDouble(TotalDownTimeMins + TotalFieldMMMins) / Convert.ToDouble(TotalUpTimeMins)) * 100)), 2);
                     ExcelworkSheet.Rows.Cells[XAsis, YAsis] = "Totals";
                     ExcelworkSheet.Rows.Cells[XAsis, YAsis+2] = TotalUpTimeMins;
                     ExcelworkSheet.Rows.Cells[XAsis, YAsis+3] = TotalDownTimeMins;
